@@ -12,12 +12,12 @@ export const formatRoomKey = (val: string) => {
 		.toLowerCase();
 };
 
-export const fetchRoomAndGame = async (roomId: string): Promise<{ room: Room, game: Game | null }> => {
+export const loadRoom = async (roomId: string): Promise<{ room: Room, game: Game | null }> => {
 	const res = await get_room(roomId);
 	return res.data();
 }
 
-export const createNewRoom = async (): Promise<string> => {
+export const createRoom = async (): Promise<string> => {
 	const res = await post_createRoom();
 	const { key } = res.data();
 	return key;

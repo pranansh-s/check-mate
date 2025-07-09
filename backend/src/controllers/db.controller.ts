@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { DatabaseError } from "../models/error.js";
 import FirebaseService from "../services/firebase.service.js";
 import RedisService from "../services/redis.service.js";

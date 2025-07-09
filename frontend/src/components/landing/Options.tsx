@@ -10,6 +10,7 @@ import Button from '@/components/common/Button';
 
 import { auth } from '@/lib/firebase/client';
 import { openModal } from '@/redux/features/modalSlice';
+import { createRoom } from '@/lib/utils/room';
 
 const Options: React.FC = () => {
   const router = useRouter();
@@ -24,7 +25,7 @@ const Options: React.FC = () => {
     }
 
     setLoading(true);
-    const key = await createNewRoom(auth.currentUser.uid);
+    const key = await createRoom();
     router.push(`/room/${key}`);
     
     setLoading(false);

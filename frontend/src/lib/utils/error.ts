@@ -55,13 +55,13 @@ export const handleAPIErrors = (error: AxiosError) => {
 		
 	}
 
-	if(status === 400) {
-		showErrorToast(title, err);
-	} else if (status === 401) {
-		console.warn(err);
-		showErrorToast(title, strings.errors.notAuth);
-	} else if (status === 500) {
-		console.error(err);
-		showErrorToast(title, strings.errors.serverError);
-	}
+	// if(status === 400) {
+	// 	showErrorToast(title, err);
+	// } else if (status === 401) {
+	// 	console.warn(err);
+	// 	showErrorToast(title, strings.errors.notAuth);
+	// } else if (status === 500) {
+	// 	console.error(err);
+	// 	showErrorToast(title, strings.errors.serverError);
+	// }
 }

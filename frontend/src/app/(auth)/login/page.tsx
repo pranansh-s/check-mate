@@ -32,7 +32,7 @@ export default function LoginPage() {
         password: formState.password?.value ?? '',
       });
 
-      (await signInWithEmailAndPassword(auth, email, password)) as UserCredential;
+      await signInWithEmailAndPassword(auth, email, password);
       router.push('/');
     } catch (err) {
       handleErrors(err, strings.auth.errors.loginFail, setFormState);

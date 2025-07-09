@@ -36,7 +36,7 @@ export default function RegisterPage() {
         confirmPassword: formState.confirmPassword?.value ?? '',
       });
 
-      const { user } = (await createUserWithEmailAndPassword(auth, email, password)) as UserCredential;
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
       await createProfile(displayName, email, user.uid);
       router.push('/');

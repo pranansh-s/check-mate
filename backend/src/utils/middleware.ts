@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import admin from "firebase-admin";
 
-import { ServiceError, UnauthorizedError } from "../models/error.js";
+import { ForbiddenError, ServiceError, UnauthorizedError } from "../models/error.js";
 
 export const appCors = cors({
   origin: process.env.CORS_ORIGIN ?? "http://localhost:3000",
@@ -22,10 +23,12 @@ export const handleRouteErrors = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error("[ROUTE_ERROR]", req.url, err.message);
+  console.error("[ROUTE_ERROR]", req.url, err.name, err.message);
 
   if (err instanceof ServiceError) {
     res.status(400).json({ error: err.message });
+  } else if (err instanceof ForbiddenError) {
+    res.status(403).json({ error: err.message });
   } else if (err instanceof UnauthorizedError) {
     res.status(401).json({ error: err.message });
   } else {
@@ -33,17 +36,22 @@ export const handleRouteErrors = (
   }
 };
 
-export const handleAuthValidation = (
+export const handleAuthValidation = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.headers["authorization"]?.split(" ")[1];
-  if (!userId) {
-    next(new UnauthorizedError());
-    return;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  if (!token) {
+    return next(new ForbiddenError());
   }
 
-  req.userId = userId;
-  next();
+  try {
+    const user = await admin.auth().verifyIdToken(token);
+    req.userId = user.uid;
+    next();
+  }
+  catch (err) {
+    next(new UnauthorizedError());
+  }
 };

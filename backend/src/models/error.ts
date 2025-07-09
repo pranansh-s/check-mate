@@ -5,6 +5,13 @@ export class UnauthorizedError extends Error {
   }
 }
 
+export class ForbiddenError extends Error {
+  constructor() {
+    super("Requires Token to Access");
+    this.name = "ForbiddenError";
+  }
+}
+
 export class DatabaseError extends Error {
   constructor() {
     super("Database Operation Failed");
