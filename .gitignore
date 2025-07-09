@@ -1,0 +1,17 @@
+.DS_Store
+*.log
+*.env
+*.pem
+.vscode/
+
+**/node_modules/
+
+**/package-lock.json
+
+**/.next/
+**/dist/
+**/build/
+
+**/npm-debug.log*
+
+dump.rdb
