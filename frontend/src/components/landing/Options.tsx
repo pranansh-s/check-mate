@@ -8,9 +8,9 @@ import tw from 'tailwind-styled-components';
 
 import Button from '@/components/common/Button';
 
-import { auth } from '@/lib/firebase/client';
-import { openModal } from '@/redux/features/modalSlice';
+import { auth } from '@/lib/firebase';
 import { createRoom } from '@/lib/utils/room';
+import { openModal } from '@/redux/features/modalSlice';
 
 const Options: React.FC = () => {
   const router = useRouter();
@@ -27,7 +27,7 @@ const Options: React.FC = () => {
     setLoading(true);
     const key = await createRoom();
     router.push(`/room/${key}`);
-    
+
     setLoading(false);
   };
 

@@ -24,18 +24,18 @@ class FirebaseService {
     }
   };
 
-  setDoc = async <T extends object>(collection: string, id: string, data: T) => {
+  setDoc = <T extends object>(collection: string, id: string, data: T) => {
     try {
-      await this.db.collection(collection).doc(id).set(data);
+      return this.db.collection(collection).doc(id).set(data);
     } catch (err) {
       console.error("Firebase SET failed:", err);
       throw new Error();
     }
   };
 
-  removeDoc = async (collection: string, id: string) => {
+  removeDoc = (collection: string, id: string) => {
     try {
-      await this.db.collection(collection).doc(id).delete();
+      return this.db.collection(collection).doc(id).delete();
     } catch (err) {
       console.error("Firebase DEL failed:", err);
       throw new Error();

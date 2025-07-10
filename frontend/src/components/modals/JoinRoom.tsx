@@ -26,7 +26,7 @@ const JoinRoom: React.FC = memo(() => {
     });
   };
 
-  const handleRoomJoin = async () => {
+  const handleRoomJoin = () => {
     setLoading(true);
     try {
       const { roomKey } = RoomKeySchema.parse({

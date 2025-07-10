@@ -1,0 +1,13 @@
+.next/
+out/
+build/
+
+
+node_modules/
+
+
+public/
+
+.env
+.env.*
+.DS_Store

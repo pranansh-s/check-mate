@@ -50,12 +50,7 @@ class SocketController {
         const chatMessage = await this.roomService.sendMessage(currentRoomId, currentUserId, message);
         socket.to(currentRoomId).emit("recieveChatMessage", chatMessage);
       } catch (err) {
-        this.handleErrors(
-          socket,
-          currentRoomId,
-          "Failed to send chat message",
-          err
-        );
+        this.handleErrors(socket, currentRoomId, "Failed to send chat message", err);
       }
     });
 

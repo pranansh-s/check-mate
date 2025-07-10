@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { createUserWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 
-import { auth } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { createProfile } from '@/lib/utils/user';
 import { useForm } from '@/hooks/useForm';
@@ -37,8 +37,8 @@ export default function RegisterPage() {
       });
 
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
-
       await createProfile(displayName, email, user.uid);
+      
       router.push('/');
     } catch (err) {
       handleErrors(err, strings.auth.errors.registerFail, setFormState);

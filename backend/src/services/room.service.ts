@@ -16,8 +16,8 @@ class RoomService {
     return room;
   };
 
-  saveRoom = async (roomId: string, room: Room) => {
-    await dbController.saveData<Room>(this.ROOM_PREFIX, room, roomId);
+  saveRoom = (roomId: string, room: Room) => {
+    return dbController.saveData<Room>(this.ROOM_PREFIX, room, roomId);
   };
 
   destroyRoom = async (roomId: string) => {
@@ -50,7 +50,7 @@ class RoomService {
     }
     room.participants.push(userId);
 
-    this.saveRoom(roomId, room);
+    await this.saveRoom(roomId, room);
     return room;
   };
 
@@ -67,7 +67,7 @@ class RoomService {
       return room;
     }
 
-    this.saveRoom(roomId, room);
+    await this.saveRoom(roomId, room);
     return room;
   };
 
@@ -84,7 +84,7 @@ class RoomService {
       chat: [...(room.chat || []), createdMessage],
     } as Room;
 
-    this.saveRoom(roomId, updatedRoom);
+    await this.saveRoom(roomId, updatedRoom);
     return createdMessage;
   };
 }

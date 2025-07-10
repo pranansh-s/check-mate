@@ -6,7 +6,7 @@ import { onLogin, onLogout } from '@/redux/features/userSlice';
 import { store } from '@/redux/store';
 import { strings } from '@/constants/strings';
 
-import { auth, db } from '../firebase/client';
+import { auth, db } from '../firebase';
 import { handleErrors } from './error';
 
 export const refreshProfile = async (uid: string) => {
@@ -30,19 +30,19 @@ export const refreshProfile = async (uid: string) => {
       sessionStorage.setItem('profile', JSON.stringify(userData));
     } else store.dispatch(onLogout());
   } catch (err) {
-    handleErrors(err, strings.auth.errors.couldNotFetchProfile);
+    handleErrors(err, strings.auth.errors.loginFail);
     await logOut();
   }
 };
 
-export const createProfile = async (displayName: string, email: string, uid: string) => {
+export const createProfile = (displayName: string, email: string, uid: string) => {
   const userProfile = {
     displayName: displayName,
     email: email,
     createdAt: Date.now(),
   } as UserProfile;
 
-  await setDoc(doc(db, 'profiles', uid), userProfile);
+  return setDoc(doc(db, 'profiles', uid), userProfile);
 };
 
 export const logOut = async () => {

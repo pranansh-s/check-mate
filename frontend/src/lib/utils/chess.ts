@@ -1,5 +1,6 @@
-import { cardinalDirections, COLUMN_LETTERS, diagonalDirections, knightDirections } from '@/constants';
 import { BoardMap, Move, Piece, PieceColor, PieceType, Position } from '@/types';
+
+import { cardinalDirections, COLUMN_LETTERS, diagonalDirections, knightDirections } from '@/constants/chess';
 
 import { opponentSide } from './game';
 

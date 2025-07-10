@@ -26,9 +26,9 @@ class RedisService {
     }
   };
 
-  setItem = async <T extends object>(key: string, value: T) => {
+  setItem = <T extends object>(key: string, value: T) => {
     try {
-      await this.client.set(key, JSON.stringify(value), {
+      return this.client.set(key, JSON.stringify(value), {
         EX: this.TTL_MIN * 60,
       });
     } catch (err) {
@@ -37,21 +37,21 @@ class RedisService {
     }
   };
 
-  removeItem = async (key: string) => {
+  removeItem = (key: string) => {
     try {
-      await this.client.del(key);
+      return this.client.del(key);
     } catch (err) {
       console.error("Redis DEL failed:", err);
       throw new Error;
     }
   };
 
-  connect = async () => {
-    await this.client.connect();
+  connect = () => {
+    this.client.connect();
   };
 
-  disconnect = async () => {
-    await this.client.quit();
+  disconnect = () => {
+    this.client.quit();
   };
 }
 

@@ -1,34 +1,24 @@
-import { Duration } from "@/constants";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { auth } from "./firebase/client";
-import { handleAPIErrors } from "./utils/error";
+import axios, { AxiosResponse } from 'axios';
 
-let userToken = "";
+import { axiosConfig } from '@/constants/config';
 
-if (auth.currentUser) {
-  userToken = auth.currentUser.uid;
-}
+import { handleAPIErrors } from './utils/error';
+import { CreateRoomResponse, GetRoomResponse } from '@/types/api';
 
-const client = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000",
-  responseType: "json",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${userToken}`,
-  },
-  timeout: Duration.apiTimeout,
-  validateStatus: () => true,
-});
+const client = axios.create(axiosConfig);
 
-client.interceptors.response.use((response: AxiosResponse) => response,
-  (error: AxiosError) => {
+client.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: Error) => {
     handleAPIErrors(error);
-});
+    return Promise.reject(error);
+  }
+);
 
-export async function get_room(id: string) {
-  return await client.get(`/room/${id}`);
+export function get_room(id: string) {
+  return client.get<GetRoomResponse>(`/room/${id}`);
 }
 
-export async function post_createRoom() {
-  return await client.post("/new-room");
+export function post_create_room() {
+  return client.post<CreateRoomResponse>('/new-room');
 }

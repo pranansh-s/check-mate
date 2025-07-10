@@ -7,7 +7,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Provider } from 'react-redux';
 
-import { auth, db } from '@/lib/firebase/client';
+import { auth, db } from '@/lib/firebase';
 import { logOut, refreshProfile } from '@/lib/utils/user';
 
 import { onUpdate } from './features/userSlice';

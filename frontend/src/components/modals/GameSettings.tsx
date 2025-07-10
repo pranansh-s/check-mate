@@ -8,7 +8,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import tw from 'tailwind-styled-components';
 import { Group, MathUtils } from 'three';
 
-import { auth } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase';
 import { createNewGameForRoom } from '@/lib/utils/game';
 
 import Button from '../common/Button';

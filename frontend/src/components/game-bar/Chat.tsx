@@ -8,7 +8,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
 import { z } from 'zod';
 
-import { db } from '@/lib/firebase/client';
+import { db } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { sendMessage } from '@/lib/utils/room';
 import { MessageSchema } from '@/schema/MessageSchema';

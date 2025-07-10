@@ -1,16 +1,16 @@
 import { redirect } from 'next/navigation';
 
-import { loadRoom } from '@/lib/utils/room';
 import RoomClient from '@/components/room';
+import { get_room } from '@/lib/api';
 
 export default async function RoomPage({ params }: { params: { id: string } }) {
-	const { id } = await params;
+  const { id } = await params;
 
-	try {
-		const data = await loadRoom(id);
-		return <RoomClient roomId={id} {...data} />;
-  	} catch (err) {
-		//send error data with redirect for toast
-		return redirect('/');
-  	}
+  try {
+    const data = (await get_room(id)).data;
+    return <RoomClient roomId={id} {...data} />;
+  } catch (err) {
+    //send error data with redirect for toast
+    return redirect('/');
+  }
 }

@@ -18,8 +18,8 @@ class GameService {
     return game;
   };
 
-  saveGame = async (game: Game, id: string) => {
-    await dbController.saveData<Game>(this.GAME_PREFIX, game, id);
+  saveGame = (game: Game, id: string) => {
+    return dbController.saveData<Game>(this.GAME_PREFIX, game, id);
   };
 
   makeMove = async () => {};
@@ -76,7 +76,7 @@ class GameService {
     const uuid = randomUUID();
     GameService.roomToGameId.set(roomId, uuid);
 
-    this.saveGame(newGame, uuid);
+    await this.saveGame(newGame, uuid);
     return newGame;
   };
 }

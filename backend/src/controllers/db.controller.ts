@@ -53,8 +53,8 @@ class DatabaseController {
   deleteData = async (prefix: string, id: string) => {
     const cacheKey = `${prefix}:${id}`;
     try {
-      await this.redis.removeItem(cacheKey);
       await this.firebase.removeDoc(prefix, id);
+      await this.redis.removeItem(cacheKey);
     } catch (err) {
       console.error(`Database delete operation failed for ${prefix}/${id}`);
       throw new DatabaseError();

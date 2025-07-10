@@ -6,7 +6,7 @@ import { Game, GameServer, Room } from '@/types';
 import { collection, limit, onSnapshot, query, where } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
 
-import { auth, db } from '@/lib/firebase/client';
+import { auth, db } from '@/lib/firebase';
 import { parseGame, updatePlayerSide } from '@/lib/utils/game';
 import { goToMove, initMoves, movePiece } from '@/redux/features/boardSlice';
 import { beginTurn, initGameState } from '@/redux/features/gameSlice';

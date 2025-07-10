@@ -1,36 +1,31 @@
-import { Game, Message, Room } from '@/types';
+import { Message } from '@/types';
 import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 
-import { auth, db } from '../firebase/client';
-import { get_room, post_createRoom } from '../api';
+import { post_create_room } from '../api';
+import { auth, db } from '../firebase';
 
 export const formatRoomKey = (val: string) => {
-	const cleaned = val.replace(/[^a-z0-9]/gi, '');
-	return cleaned
-		.slice(0, 8)
-		.replace(/(\w{4})(\w{0,4})/, '$1-$2')
-		.toLowerCase();
+  const cleaned = val.replace(/[^a-z0-9]/gi, '');
+  return cleaned
+    .slice(0, 8)
+    .replace(/(\w{4})(\w{0,4})/, '$1-$2')
+    .toLowerCase();
 };
 
-export const loadRoom = async (roomId: string): Promise<{ room: Room, game: Game | null }> => {
-	const res = await get_room(roomId);
-	return res.data();
-}
+export const createRoom = async () => {
+  const res = await post_create_room();
+  const id = res.data.key;
+  return id;
+};
 
-export const createRoom = async (): Promise<string> => {
-	const res = await post_createRoom();
-	const { key } = res.data();
-	return key;
-}
-
-export const sendMessage = async (roomId: string, content: string) => {
+export const sendMessage = (roomId: string, content: string) => {
   const newMessage = {
     content,
     senderId: auth.currentUser!.uid,
     timestamp: Date.now(),
   } as Message;
 
-  await updateDoc(doc(db, 'rooms', roomId), {
+  return updateDoc(doc(db, 'rooms', roomId), {
     chat: arrayUnion(newMessage),
   });
 };

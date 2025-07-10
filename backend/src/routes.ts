@@ -16,7 +16,6 @@ router.post("/new-room", handleAuthValidation, async (req, res, next) => {
     const roomId = await roomService.createRoom(userId);
 
     res.status(201).json({
-      message: "Succesfully created room",
       key: roomId,
     });
   } catch (err) {
@@ -37,7 +36,6 @@ router.get("/room/:id", handleAuthValidation, async (req, res, next) => {
       );
 
     res.status(200).json({
-      message: "Succesfully joined room",
       room,
       game,
     });

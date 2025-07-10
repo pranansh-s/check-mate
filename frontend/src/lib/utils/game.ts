@@ -1,7 +1,7 @@
 import { Game, GameConfig, GameServer, Move, Piece, PieceColor } from '@/types';
-import { addDoc, arrayUnion, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
 
-import { db } from '../firebase/client';
+import { db } from '../firebase';
 import { handleErrors } from './error';
 
 export const createNewGameForRoom = async (roomId: string, config: GameConfig) => {
