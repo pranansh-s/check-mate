@@ -5,8 +5,8 @@ export function middleware(request: NextRequest) {
   const authRoutes = ['/login', '/register'];
   const { pathname } = request.nextUrl;
 
-  const userId = request.cookies.get('uid')?.value ?? '';
-  const isLoggedIn = userId !== '';
+  const token = request.cookies.get('token')?.value;
+  const isLoggedIn = token ? true : false;
 
   if (protectedRoutes.some(route => pathname.startsWith(route))) {
     if (!isLoggedIn) {

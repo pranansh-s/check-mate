@@ -1,10 +1,9 @@
 'use client';
 
-import { toastConfig } from '@/constants';
 import { toast } from 'react-toastify';
 import tw from 'tailwind-styled-components';
 
-import { strings } from '@/constants/strings';
+import { toastConfig } from '@/constants/config';
 
 interface IErrorToastProps {
   title: string;

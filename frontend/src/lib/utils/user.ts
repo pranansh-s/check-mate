@@ -52,9 +52,7 @@ export const logOut = async () => {
     }
 
     await signOut(auth);
-    document.cookie = 'uid=; path=/; samesite=strict;';
     store.dispatch(onLogout());
-    sessionStorage.removeItem('profile');
 
     window.location.href = '/';
   } catch (err) {

@@ -8,7 +8,7 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     await logOut();
   };
-  
+
   return (
     <div>
       <Button onClick={handleLogout}>logout</Button>

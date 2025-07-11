@@ -9,6 +9,7 @@ import tw from 'tailwind-styled-components';
 import Button from '@/components/common/Button';
 
 import { auth } from '@/lib/firebase';
+import { logErrors } from '@/lib/utils/error';
 import { createRoom } from '@/lib/utils/room';
 import { openModal } from '@/redux/features/modalSlice';
 
@@ -25,10 +26,14 @@ const Options: React.FC = () => {
     }
 
     setLoading(true);
-    const key = await createRoom();
-    router.push(`/room/${key}`);
-
-    setLoading(false);
+    try {
+      const key = await createRoom();
+      router.push(`/room/${key}`);
+    } catch (err) {
+      logErrors(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

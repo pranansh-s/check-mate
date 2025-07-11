@@ -37,9 +37,9 @@ export const mapAPIStatusCodeToMessage = (status: number, error: string): string
     case 400:
       return error;
     case 401:
-      return strings.apiError.noAuthMessage;
-    case 403:
       return strings.apiError.wrongAuthMessage;
+    case 403:
+      return strings.apiError.noAuthMessage;
     case 429:
       return strings.apiError.rateLimitMessage;
     case 500:

@@ -1,5 +1,5 @@
 import { IInputValue } from '@/types';
-import { isAxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { z } from 'zod';
 
@@ -45,22 +45,25 @@ export const handleErrors = (
   }
 };
 
-export const handleAPIErrors = (error: Error) => {
-  if (!isAxiosError(error)) {
-    console.error('[API_ERROR]', error.name, error.message);
-    return;
-  }
-  console.error('[API_ERROR]', error.code, error.response?.status, error.response?.data.error);
-
-  if (typeof window === 'undefined') {
+export const handleAPIErrors = (error: unknown) => {
+  if (!isAxiosError(error) || typeof window === 'undefined') {
     return;
   }
 
   const response = error.response;
   if (!response) {
     showErrorToast(strings.apiError.requestError, mapAxiosCodeToMessage(error.code));
-    return;
+  } else {
+    showErrorToast(strings.apiError.requestFailError, mapAPIStatusCodeToMessage(response.status, response.data.error));
   }
+};
 
-  showErrorToast(strings.apiError.requestFailError, mapAPIStatusCodeToMessage(response.status, response.data.error));
+export const logErrors = (error: unknown) => {
+  if (error instanceof AxiosError) {
+    console.error(`[API_ERROR] ${error.code} status: ${error.response?.status} message: ${error.response?.data.error}`);
+  } else if (error instanceof Error) {
+    console.error(`[ERROR] ${error.name} message: ${error.message}`);
+  } else {
+    console.error('[UNKNOWN]', error);
+  }
 };

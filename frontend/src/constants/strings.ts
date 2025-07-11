@@ -3,7 +3,7 @@ export const strings = {
     requestError: 'failed to send request',
     requestFailError: 'request failed',
     noAuthMessage: 'you need to login to access this',
-    wrongAuthMessage: 'you are not authorized to access this page',
+    wrongAuthMessage: 'you are not authorized to access this',
     timeoutMessage: 'connection timed out. please try again later',
     networkMessage: 'could not connect with server. please check your connection',
     rateLimitMessage: 'too many requests. please try again later',

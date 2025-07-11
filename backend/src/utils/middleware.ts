@@ -27,10 +27,10 @@ export const handleRouteErrors = (
 
   if (err instanceof ServiceError) {
     res.status(400).json({ error: err.message });
-  } else if (err instanceof ForbiddenError) {
-    res.status(403).json({ error: err.message });
   } else if (err instanceof UnauthorizedError) {
     res.status(401).json({ error: err.message });
+  } else if (err instanceof ForbiddenError) {
+    res.status(403).json({ error: err.message });
   } else {
     res.status(500).json({ error: "Internal Server Error" });
   }

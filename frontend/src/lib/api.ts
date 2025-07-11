@@ -1,16 +1,30 @@
-import axios, { AxiosResponse } from 'axios';
+import { CreateRoomResponse, GetRoomResponse } from '@/types/api';
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 import { axiosConfig } from '@/constants/config';
 
+import { getAccessToken } from './utils/auth';
 import { handleAPIErrors } from './utils/error';
-import { CreateRoomResponse, GetRoomResponse } from '@/types/api';
 
 const client = axios.create(axiosConfig);
 
 client.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error: Error) => {
+  (error: unknown) => {
     handleAPIErrors(error);
+    return Promise.reject(error);
+  }
+);
+
+client.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    const token = await getAccessToken();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error: unknown) => {
     return Promise.reject(error);
   }
 );

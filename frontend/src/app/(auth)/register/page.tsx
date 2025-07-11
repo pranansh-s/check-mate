@@ -38,7 +38,7 @@ export default function RegisterPage() {
 
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       await createProfile(displayName, email, user.uid);
-      
+
       router.push('/');
     } catch (err) {
       handleErrors(err, strings.auth.errors.registerFail, setFormState);

@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 
 import { UserProfile } from '@/types';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, onIdTokenChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Provider } from 'react-redux';
 
 import { auth, db } from '@/lib/firebase';
+import { setAccessToken } from '@/lib/utils/auth';
 import { logOut, refreshProfile } from '@/lib/utils/user';
 
 import { onUpdate } from './features/userSlice';
@@ -18,14 +19,25 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    const authUnsubscribe = onAuthStateChanged(auth, async firebaseUser => {
-      if (!firebaseUser) return;
 
-      await refreshProfile(firebaseUser.uid);
-      document.cookie = `uid=${firebaseUser.uid}; path=/; samesite=strict;`;
+    const tokenUnsubscribe = onIdTokenChanged(auth, async user => {
+      if (user) {
+        const token = await user.getIdToken();
+        setAccessToken(token);
+      } else {
+        setAccessToken(null);
+      }
+    });
 
+    const authUnsubscribe = onAuthStateChanged(auth, async user => {
+      if (!user) {
+        sessionStorage.removeItem('profile');
+        return;
+      }
+
+      await refreshProfile(user.uid);
       return onSnapshot(
-        doc(db, 'profiles', firebaseUser.uid),
+        doc(db, 'profiles', user.uid),
         snapshot => {
           const profileData = snapshot.data() as UserProfile;
           store.dispatch(onUpdate(profileData));
@@ -40,7 +52,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     return () => {
       authUnsubscribe();
-      document.cookie = 'uid=; path=/; samesite=strict;';
+      tokenUnsubscribe();
     };
   }, []);
 
