@@ -14,4 +14,6 @@
 
 **/npm-debug.log*
 
-dump.rdb
+**/dump.rdb
+
+.turbo

@@ -1,0 +1,20 @@
+{
+  "name": "@check-mate/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./types": "./dist/types/index.js",
+    "./schemas": "./dist/schemas/index.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

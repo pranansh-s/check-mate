@@ -1,0 +1,16 @@
+{
+  "name": "check-mate",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": " npm -C ./web run dev && npm -C ./server run dev",
+    "build": " npm -C ./web run build && npm -C ./shared run build && npm -C ./server run build",
+    "lint": " npm -C ./web run lint && npm -C ./server run lint"
+  },
+  "workspaces": [
+    "web",
+    "server",
+    "shared/"
+  ],
+  "packageManager": "npm@10.8.2"
+}
