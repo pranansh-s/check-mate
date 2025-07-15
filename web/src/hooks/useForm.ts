@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
 import { IInputValue } from '@/types';
-import { z, ZodSchema } from 'zod';
+import { z } from 'zod';
 
 export const useForm = () => {
   const [formState, setFormState] = useState<{ [key: string]: IInputValue }>({});
   const hasErrors = Object.values(formState).some(input => input?.error);
 
-  const handleInputChange = (schema: ZodSchema) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (schema: z.ZodType) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     try {
       schema.parse(value);

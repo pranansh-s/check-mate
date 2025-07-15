@@ -3,7 +3,8 @@
 import { memo } from 'react';
 import Image from 'next/image';
 
-import { Move, Piece, Position } from '@/types';
+import { Piece } from '@/types';
+import { Move, Position } from "@check-mate/shared/types";
 import tw from 'tailwind-styled-components';
 
 import { handleErrors } from '@/lib/utils/error';

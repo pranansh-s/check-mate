@@ -1,17 +1,17 @@
-import { UserProfile } from '@/types';
+import { Profile } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: null as UserProfile | null,
+  initialState: null as Profile | null,
   reducers: {
-    onLogin: (_, action: PayloadAction<UserProfile>) => {
+    onLogin: (_, action: PayloadAction<Profile>) => {
       return action.payload;
     },
     onLogout: () => {
       return null;
     },
-    onUpdate: (state, action: PayloadAction<Partial<UserProfile>>) => {
+    onUpdate: (state, action: PayloadAction<Partial<Profile>>) => {
       if (state) {
         return {
           ...state,

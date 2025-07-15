@@ -3,7 +3,6 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import { Message } from '@/types';
 import { doc, onSnapshot } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
 import { z } from 'zod';
@@ -11,8 +10,10 @@ import { z } from 'zod';
 import { db } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { sendMessage } from '@/lib/utils/room';
-import { MessageSchema } from '@/schema/MessageSchema';
 import { strings } from '@/constants/strings';
+
+import { MessageSchema } from "@check-mate/shared/schemas";
+import { ChatMessage } from '@check-mate/shared/types';
 
 import sendIcon from '@/../public/icons/send.svg';
 import Button from '../common/Button';
@@ -33,7 +34,7 @@ const Chat: React.FC = memo(() => {
   const roomId = params?.id as string;
 
   const endMessageRef = useRef<HTMLDivElement>(null);
-  const [chat, setChat] = useState<(Message | string)[]>([]);
+  const [chat, setChat] = useState<(ChatMessage | string)[]>([]);
   const [message, setMessage] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
 
@@ -43,7 +44,7 @@ const Chat: React.FC = memo(() => {
       if (chat.length >= 100) {
         throw new Error('chat length exceeded create a new room');
       }
-      const { content } = MessageSchema.parse({ content: message });
+      const content = MessageSchema.parse(message);
       setMessage('');
       await sendMessage(roomId, content);
     } catch (err) {
@@ -73,7 +74,7 @@ const Chat: React.FC = memo(() => {
       doc(db, 'rooms', roomId),
       snapshot => {
         if (!snapshot.exists() || !snapshot.data().chat) return;
-        const fetchedMessages = snapshot.data().chat as Message[];
+        const fetchedMessages = snapshot.data().chat as ChatMessage[];
         setChat(fetchedMessages);
       },
       err => {
@@ -86,7 +87,7 @@ const Chat: React.FC = memo(() => {
   return (
     <ChatContainer>
       <MessageHistory>
-        {chat.map((chatMessage: Message | string, idx: number) => {
+        {chat.map((chatMessage: ChatMessage | string, idx: number) => {
           const isError = typeof chatMessage === 'string';
           return (
             <MessageField $isErrorMessage={isError} key={idx}>

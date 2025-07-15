@@ -3,7 +3,7 @@
 import { memo, useCallback, useRef, useState } from 'react';
 
 import { gameTypeOptions } from '@/constants';
-import { GameConfig } from '@/types';
+import { GameConfig } from '@check-mate/shared/types';
 import { Canvas, useFrame } from '@react-three/fiber';
 import tw from 'tailwind-styled-components';
 import { Group, MathUtils } from 'three';
@@ -64,8 +64,7 @@ const GameSettings: React.FC<{ roomId: string }> = memo(
 
       const playerSide = selectedSide !== 'random' ? selectedSide : Math.round(Math.random()) === 0 ? 'white' : 'black';
       const config = {
-        whiteSidePlayer: playerSide === 'white' ? auth.currentUser!.uid : null,
-        blackSidePlayer: playerSide === 'black' ? auth.currentUser!.uid : null,
+        playerSide,
         gameType: selectedType,
       } as GameConfig;
 

@@ -9,13 +9,10 @@ import { RoomKeySchema } from "@check-mate/shared/schemas";
 
 const router = express.Router();
 
-const roomService = new RoomService();
-const gameService = new GameService();
-
 router.post("/new-room", handleAuthValidation, async (req, res, next) => {
   try {
     const userId = req.userId;
-    const roomId = await roomService.createRoom(userId);
+    const roomId = await RoomService.createRoom(userId);
 
     res.status(201).json({
       key: roomId,
@@ -30,8 +27,8 @@ router.get("/room/:id", handleAuthValidation, async (req, res, next) => {
     const userId = req.userId;
     const roomId = RoomKeySchema.parse(req.params.id);
 
-    const room = await roomService.joinRoom(roomId, userId);
-    const game = await gameService
+    const room = await RoomService.joinRoom(roomId, userId);
+    const game = await GameService
       .joinGame(roomId, userId)
       .catch((err) =>
         err instanceof ServiceError ? null : Promise.reject(err)

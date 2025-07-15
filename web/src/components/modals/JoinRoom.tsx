@@ -10,7 +10,7 @@ import ModalContainer from '@/components/modals/Modal';
 import { handleErrors } from '@/lib/utils/error';
 import { formatRoomKey } from '@/lib/utils/room';
 import { useForm } from '@/hooks/useForm';
-import { RoomKeySchema } from '@/schema/RoomKeySchema';
+import { RoomKeySchema } from '@check-mate/shared/schemas';
 import { strings } from '@/constants/strings';
 
 const JoinRoom: React.FC = memo(() => {
@@ -29,11 +29,9 @@ const JoinRoom: React.FC = memo(() => {
   const handleRoomJoin = () => {
     setLoading(true);
     try {
-      const { roomKey } = RoomKeySchema.parse({
-        roomKey: formState.roomKey?.value ?? '',
-      });
+      const id = RoomKeySchema.parse(formState.roomKey?.value);
 
-      router.push(`/room/${roomKey}`);
+      router.push(`/room/${id}`);
     } catch (err) {
       handleErrors(err, strings.room.errors.roomJoinFail, setFormState);
       setLoading(false);

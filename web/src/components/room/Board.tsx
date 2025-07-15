@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 
-import { Position } from '@/types';
+import { Position } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
 
 import { getValidMovesForPiece } from '@/lib/utils/chess';

@@ -1,4 +1,5 @@
-import { Move, Piece, Position } from '@/types';
+import { Piece } from '@/types';
+import { Move, Position } from "@check-mate/shared/types";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { boardAfterMove, createInitialBoard } from '@/lib/utils/chess';

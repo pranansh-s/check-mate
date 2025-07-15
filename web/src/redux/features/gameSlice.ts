@@ -1,11 +1,10 @@
-import { Game, PieceColor } from '@/types';
+import { Game, Color, GameType } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
-  id: null as string | null,
   isTurn: true,
-  playerSide: 'white' as PieceColor,
-  gameType: '30m',
+  playerSide: 'white' as Color,
+  gameType: '30m' as GameType,
 };
 
 const gameSlice = createSlice({
@@ -13,9 +12,8 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     initGameState: (_, action: PayloadAction<Game>) => {
-      const { id, playerTurn, playerSide, gameType } = action.payload;
+      const { playerTurn, playerSide, gameType } = action.payload;
       return {
-        id,
         isTurn: playerSide == playerTurn,
         playerSide,
         gameType,

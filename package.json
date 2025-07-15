@@ -11,6 +11,5 @@
     "web",
     "server",
     "shared/"
-  ],
-  "packageManager": "npm@10.8.2"
+  ]
 }

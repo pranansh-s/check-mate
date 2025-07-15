@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from 'react';
 
-import { Game, GameServer, Room } from '@/types';
+import { Game, Room } from '@check-mate/shared/types';
 import { collection, limit, onSnapshot, query, where } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
 
@@ -26,7 +26,6 @@ interface IRoomProps {
 
 const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
   const activeModal = useAppSelector(state => state.modals);
-  const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
 
   const initGame = useCallback(
@@ -38,16 +37,20 @@ const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
   );
 
   useEffect(() => {
-    if (!user) return;
+    if (!auth.currentUser) return;
 
-    if (game) {
-      initGame(game);
-    } else if (room.createdBy === auth.currentUser!.uid) {
-      dispatch(openModal('gameSettings'));
-    } else {
-      dispatch(openModal('waiting'));
+    const initRoom = () => {
+      if (game) {
+        initGame(game);
+        return;
+      }
+
+      const isOwner = room.createdBy === auth.currentUser?.uid;
+      dispatch(openModal(isOwner ? 'gameSettings' : 'waiting'));
     }
-  }, [dispatch, game, user]);
+
+    initRoom();
+  }, [dispatch, game, auth.currentUser, initGame]);
 
   useEffect(() => {
     const gamesQuery = query(
@@ -62,7 +65,7 @@ const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
         if (snapshot.empty) return;
         snapshot.docChanges().forEach(async change => {
           const gameDoc = change.doc;
-          const gameData = gameDoc.data() as GameServer;
+          const gameData = gameDoc.data() as Game;
           const parsedGame = parseGame(gameDoc.id, auth.currentUser!.uid, gameData);
 
           if (change.type === 'added') {

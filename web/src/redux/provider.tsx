@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { UserProfile } from '@/types';
+import { Profile } from '@check-mate/shared/types';
 import { onAuthStateChanged, onIdTokenChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Provider } from 'react-redux';
@@ -39,7 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       return onSnapshot(
         doc(db, 'profiles', user.uid),
         snapshot => {
-          const profileData = snapshot.data() as UserProfile;
+          const profileData = snapshot.data() as Profile;
           store.dispatch(onUpdate(profileData));
           sessionStorage.setItem('profile', JSON.stringify(profileData));
         },

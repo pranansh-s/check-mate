@@ -5,32 +5,31 @@ import { ServiceError } from "../utils/error.js";
 import { Game, GameConfig, PlayerState } from "@check-mate/shared/types";
 import { GAME_TIME_MS } from "../utils/game.js";
 
-class GameService {
-  private static roomToGameId = new Map<string, string>();
+const GAME_PREFIX = "games";
+const roomToGameId = new Map<string, string>();
 
-  private readonly GAME_PREFIX = "games";
-
-  getGame = async (id: string): Promise<Game> => {
-    const game = await dbController.loadData<Game>(this.GAME_PREFIX, id);
+const GameService = {
+  getGame: async (id: string): Promise<Game> => {
+    const game = await dbController.loadData<Game>(GAME_PREFIX, id);
     if (!game) {
       throw new ServiceError("Game not found");
     }
     return game;
-  };
+  },
 
-  saveGame = (game: Game, id: string) => {
-    return dbController.saveData<Game>(this.GAME_PREFIX, game, id);
-  };
+  saveGame: (game: Game, id: string) => {
+    return dbController.saveData<Game>(GAME_PREFIX, game, id);
+  },
 
-  makeMove = async () => {};
+  makeMove: async () => {},
 
-  joinGame = async (roomId: string, userId: string): Promise<Game> => {
-    const gameId = GameService.roomToGameId.get(roomId);
+  joinGame: async (roomId: string, userId: string): Promise<Game> => {
+    const gameId = roomToGameId.get(roomId);
     if (!gameId) {
       throw new ServiceError("No game in room");
     }
 
-    let game = await this.getGame(gameId);
+    let game = await GameService.getGame(gameId);
     if (game.whiteSidePlayer?.userId === userId || game.blackSidePlayer?.userId === userId) {
       return game;
     }
@@ -50,11 +49,11 @@ class GameService {
       game.state = "isPlaying";
     }
 
-    await this.saveGame(game, gameId);
+    await GameService.saveGame(game, gameId);
     return game;
-  };
+  },
 
-  createGame = async (roomId: string, userId: string, config: GameConfig): Promise<Game> => {
+  createGame: async (roomId: string, userId: string, config: GameConfig): Promise<Game> => {
     const { playerSide, gameType } = config;
 
     const playerState: PlayerState = {
@@ -74,11 +73,11 @@ class GameService {
     };
 
     const uuid = randomUUID();
-    GameService.roomToGameId.set(roomId, uuid);
+    roomToGameId.set(roomId, uuid);
 
-    await this.saveGame(newGame, uuid);
+    await GameService.saveGame(newGame, uuid);
     return newGame;
-  };
+  },
 }
 
 export default GameService;

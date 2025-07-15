@@ -26,7 +26,7 @@ export const handleRouteErrors = (
 ) => {
   console.error("[ROUTE_ERROR]", req.url, err.name, err.message);
   if(err instanceof ZodError) {
-    res.status(400).json({ error: err.issues.map(issue => issue.message).join(', ') })
+    res.status(400).json({ error: err.issues[0].message })
   } else if (err instanceof ServiceError) {
     res.status(400).json({ error: err.message });
   } else if (err instanceof UnauthorizedError) {

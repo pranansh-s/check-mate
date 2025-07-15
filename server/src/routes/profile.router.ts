@@ -4,12 +4,10 @@ import { handleAuthValidation } from "../middleware.js";
 
 const router = express.Router();
 
-const profileService = new ProfileService();
-
 router.get('/profile', handleAuthValidation, async (req, res, next) => {
 	try {
 		const userId = req.userId;
-		const profile = await profileService.getProfile(userId);
+		const profile = await ProfileService.getProfile(userId);
 
 		res.status(200).json(profile);
 	}
@@ -23,7 +21,7 @@ router.post('/new-profile', handleAuthValidation, async (req, res, next) => {
 		const userId = req.userId;
 		const newProfile = req.body;
 		//reqs validation
-		await profileService.saveProfile(newProfile, userId);
+		await ProfileService.saveProfile(newProfile, userId);
 
 		res.status(201);
 	}

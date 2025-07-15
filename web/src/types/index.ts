@@ -1,26 +1,16 @@
 import { Group } from 'three';
+import { Position, Color } from "@check-mate/shared/types";
 
 export type ModalType = 'gameSettings' | 'joinRoom' | 'waiting' | null;
 
-export interface Position {
-  x: number;
-  y: number;
-}
-
-export interface Move {
-  from: Position;
-  to: Position;
-}
-
 export type PieceType = 'pawn' | 'rook' | 'knight' | 'bishop' | 'queen' | 'king';
-export type PieceColor = 'white' | 'black';
 
 export type BoardMap = (Piece | null)[][];
 
 export interface Piece {
   src: string;
   type: PieceType;
-  color: PieceColor;
+  color: Color;
   pos: Position;
 }
 

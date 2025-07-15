@@ -11,7 +11,7 @@ import Input from '@/components/common/Input';
 import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { useForm } from '@/hooks/useForm';
-import { UserLoginSchema } from '@/schema/UserSchema';
+import { UserLoginSchema } from '@check-mate/shared/schemas';
 import { strings } from '@/constants/strings';
 
 import mailIcon from '@/../public/icons/mail.svg';
@@ -28,8 +28,8 @@ export default function LoginPage() {
 
     try {
       const { email, password } = UserLoginSchema.parse({
-        email: formState.email?.value ?? '',
-        password: formState.password?.value ?? '',
+        email: formState.email?.value,
+        password: formState.password?.value,
       });
 
       await signInWithEmailAndPassword(auth, email, password);

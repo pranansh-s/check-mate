@@ -3,13 +3,13 @@ import express from "express";
 import helmet from "helmet";
 import { createServer } from "http";
 
-import SocketController from "./controllers/socket.controller.js";
 import {
   appCors,
   appRateLimiter,
   handleRouteErrors,
 } from "./middleware.js";
 import { configSocket } from "./config.js";
+import SocketController from "./controllers/socket.controller.js";
 
 import roomRoutes from "./routes/room.router.js";
 import profileRoutes from "./routes/profile.router.js";
@@ -18,8 +18,7 @@ const app = express();
 const server = createServer(app);
 const io = configSocket(server);
 
-const socketController = new SocketController();
-io.on("connection", socketController.useSocketConnection);
+io.on("connection", SocketController);
 
 app.use(helmet());
 app.use(appCors);
