@@ -1,59 +1,43 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
 
-import { Position } from '@check-mate/shared/types';
+import { Piece } from '@/types';
 import tw from 'tailwind-styled-components';
 
-import { getValidMovesForPiece } from '@/lib/utils/chess';
-import { goToMove } from '@/redux/features/boardSlice';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import usePlayerInput from '@/hooks/usePlayerInput';
+import useValidMoves from '@/hooks/useValidMoves';
+import { useAppSelector } from '@/redux/hooks';
 
 import Cell from './Cell';
 
-const Board: React.FC = () => {
-  const { boardMap, selectedPiece, currentMoveIndex } = useAppSelector(state => state.board);
-  const { playerSide } = useAppSelector(state => state.gameState);
-  const dispatch = useAppDispatch();
-
-  const [mousePos, setMousePos] = useState<Position>({ x: 0, y: 0 });
-  const possibleMoves = useMemo(
-    () => (selectedPiece ? getValidMovesForPiece(boardMap, selectedPiece, playerSide) : []),
-    [selectedPiece, boardMap, playerSide]
+const ActivePiece: React.FC<Piece> = piece => {
+  const mousePos = usePlayerInput();
+  return (
+    <ActivePieceContainer
+      style={{
+        top: mousePos.y - 50,
+        left: mousePos.x - 50,
+      }}
+    >
+      <Image width={100} height={100} src={piece.src} alt={`active-piece-${piece.type}-${piece.color}`} priority />
+    </ActivePieceContainer>
   );
+};
+
+const Board = () => {
+  const { selectedPiece, boardMap } = useAppSelector(state => state.board);
+  const { playerSide } = useAppSelector(state => state.gameState);
+
   const board = useMemo(() => (playerSide == 'black' ? [...boardMap].reverse() : boardMap), [boardMap, playerSide]);
-
-  const isValidMove = (cellX: number, cellY: number) => {
-    return possibleMoves.some(move => move.x === cellX && move.y === cellY);
-  };
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key == 'ArrowLeft') {
-        dispatch(goToMove(currentMoveIndex - 1));
-      } else if (e.key == 'ArrowRight') {
-        dispatch(goToMove(currentMoveIndex + 1));
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('keydown', handleKeyPress);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [currentMoveIndex]);
+  const isValidMove = useValidMoves(boardMap, selectedPiece, playerSide);
 
   return (
     <BoardContainer>
-      {board.map((row, rowNumber: number) => {
-        const rowIdx = playerSide === 'black' ? boardMap.length - 1 - rowNumber : rowNumber;
-        return row.map((piece, colIdx: number) => (
+      {board.map((row, rowNumber) => {
+        const rowIdx = playerSide === 'black' ? board.length - 1 - rowNumber : rowNumber;
+        return row.map((piece, colIdx) => (
           <Cell
             key={`cell-${rowIdx}+${colIdx}`}
             piece={piece}
@@ -62,22 +46,7 @@ const Board: React.FC = () => {
           />
         ));
       })}
-      {selectedPiece && (
-        <SelectedPiece
-          style={{
-            top: mousePos.y - 50,
-            left: mousePos.x - 50,
-          }}
-        >
-          <Image
-            width={100}
-            height={100}
-            src={selectedPiece.src}
-            alt={`active-piece-${selectedPiece.type}-${selectedPiece.color}`}
-            priority
-          />
-        </SelectedPiece>
-      )}
+      {selectedPiece && <ActivePiece {...selectedPiece} />}
     </BoardContainer>
   );
 };
@@ -94,7 +63,7 @@ const BoardContainer = tw.div`
   bg-white
 `;
 
-const SelectedPiece = tw.div`
+const ActivePieceContainer = tw.div`
   pointer-events-none
   absolute
 `;

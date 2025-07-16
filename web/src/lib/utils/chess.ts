@@ -1,4 +1,5 @@
-import { BoardMap, Move, Piece, PieceColor, PieceType, Position } from '@/types';
+import { BoardMap, Piece, PieceType } from '@/types';
+import { Position } from '@check-mate/shared/types';
 
 import { cardinalDirections, COLUMN_LETTERS, diagonalDirections, knightDirections } from '@/constants/chess';
 

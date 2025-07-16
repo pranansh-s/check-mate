@@ -8,9 +8,11 @@ const userSlice = createSlice({
     onLogin: (_, action: PayloadAction<Profile>) => {
       return action.payload;
     },
+
     onLogout: () => {
       return null;
     },
+
     onUpdate: (state, action: PayloadAction<Partial<Profile>>) => {
       if (state) {
         return {

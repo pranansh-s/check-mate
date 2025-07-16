@@ -1,4 +1,4 @@
-import { Game, Room } from '.';
+import { Game, Room } from '@check-mate/shared/types';
 
 export interface GetRoomResponse {
   room: Room;

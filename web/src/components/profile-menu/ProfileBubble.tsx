@@ -7,7 +7,7 @@ import tw from 'tailwind-styled-components';
 
 import { useAppSelector } from '@/redux/hooks';
 
-const ProfileBubble: React.FC = memo(() => {
+const ProfileBubble = memo(() => {
   const router = useRouter();
   const user = useAppSelector(state => state.user);
   if (!user) return;

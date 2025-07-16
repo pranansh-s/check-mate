@@ -8,6 +8,7 @@ const modalSlice = createSlice({
     openModal: (_, action: PayloadAction<ModalType>) => {
       return action.payload;
     },
+
     closeModal() {
       return null;
     },

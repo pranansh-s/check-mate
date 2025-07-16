@@ -1,5 +1,7 @@
-import { Game, Color, GameType } from '@check-mate/shared/types';
+import { Color, Game, GameType } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { getUserId } from '@/lib/utils/user';
 
 const initialState = {
   isTurn: true,
@@ -12,16 +14,28 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     initGameState: (_, action: PayloadAction<Game>) => {
-      const { playerTurn, playerSide, gameType } = action.payload;
+      const { playerTurn, whiteSidePlayer, blackSidePlayer, gameType } = action.payload;
+      const userId = getUserId();
+      if (!userId) return;
+
+      let playerSide: Color;
+      if (whiteSidePlayer?.userId === userId) {
+        playerSide = 'white';
+      } else if (blackSidePlayer?.userId === userId) {
+        playerSide = 'black';
+      } else return;
+
       return {
         isTurn: playerSide == playerTurn,
         playerSide,
         gameType,
       };
     },
+
     endTurn: state => {
       state.isTurn = false;
     },
+
     beginTurn: state => {
       state.isTurn = true;
     },

@@ -6,7 +6,7 @@ import tw from 'tailwind-styled-components';
 
 import ModalContainer from './Modal';
 
-const Waiting: React.FC = memo(() => {
+const Waiting = memo(() => {
   return (
     <StyledModalContainer>
       <WaitingText>waiting for room owner to start game</WaitingText>

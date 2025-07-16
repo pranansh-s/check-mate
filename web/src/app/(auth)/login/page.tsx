@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { UserLoginSchema } from '@check-mate/shared/schemas';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import Button from '@/components/common/Button';
@@ -11,7 +12,6 @@ import Input from '@/components/common/Input';
 import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { useForm } from '@/hooks/useForm';
-import { UserLoginSchema } from '@check-mate/shared/schemas';
 import { strings } from '@/constants/strings';
 
 import mailIcon from '@/../public/icons/mail.svg';

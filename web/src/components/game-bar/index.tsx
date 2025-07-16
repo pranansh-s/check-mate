@@ -8,7 +8,7 @@ import Chat from './Chat';
 import GameOptions from './GameOptions';
 import MoveHistory from './MoveHistory';
 
-const GameBar: React.FC = memo(() => {
+const GameBar = memo(() => {
   return (
     <GameBarContainer>
       <GameOptions />

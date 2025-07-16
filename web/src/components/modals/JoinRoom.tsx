@@ -3,6 +3,8 @@
 import { memo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { RoomKeySchema } from '@check-mate/shared/schemas';
+
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import ModalContainer from '@/components/modals/Modal';
@@ -10,10 +12,9 @@ import ModalContainer from '@/components/modals/Modal';
 import { handleErrors } from '@/lib/utils/error';
 import { formatRoomKey } from '@/lib/utils/room';
 import { useForm } from '@/hooks/useForm';
-import { RoomKeySchema } from '@check-mate/shared/schemas';
 import { strings } from '@/constants/strings';
 
-const JoinRoom: React.FC = memo(() => {
+const JoinRoom = memo(() => {
   const { formState, setFormState, hasErrors } = useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();

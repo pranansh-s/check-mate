@@ -1,5 +1,5 @@
 import { Piece } from '@/types';
-import { Move, Position } from "@check-mate/shared/types";
+import { Move, Position } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { boardAfterMove, createInitialBoard } from '@/lib/utils/chess';
@@ -31,6 +31,7 @@ const boardSlice = createSlice({
         selectedPiece: null,
       };
     },
+
     initMoves: (_, action: PayloadAction<Move[]>) => {
       const moveList = action.payload;
 
@@ -49,6 +50,7 @@ const boardSlice = createSlice({
         selectedPiece: null,
       };
     },
+
     goToMove: (state, action: PayloadAction<number>) => {
       const moveList = state.moves;
       const index = action.payload;
@@ -70,12 +72,14 @@ const boardSlice = createSlice({
         selectedPiece: null,
       };
     },
+
     selectPiece: (state, action: PayloadAction<Position>) => {
       const { x, y } = action.payload;
       const piece = state.boardMap[y][x];
 
       state.selectedPiece = piece;
     },
+
     deSelectPiece: state => {
       state.selectedPiece = null;
     },

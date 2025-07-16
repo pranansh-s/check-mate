@@ -14,7 +14,7 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
   } catch (err) {
     //send error data with redirect for toast
     //propogate firebase console delete or modify for cache
-		console.error('Failed to join room: ', getErrorMessage(err));
+    console.error('Failed to join room: ', getErrorMessage(err));
     return redirect('/');
   }
 }

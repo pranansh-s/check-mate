@@ -6,7 +6,7 @@ import surrender from '@/../public/icons/flag.svg';
 import draw from '@/../public/icons/handshake.svg';
 import Button from '../common/Button';
 
-const GameOptions: React.FC = () => {
+const GameOptions = () => {
   return (
     <OptionsContainer>
       <Button size="icon" preIconNode={draw} themeColor="green" />

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-const Lighting: React.FC = memo(() => {
+const Lighting = memo(() => {
   return (
     <group>
       <directionalLight position={[5, 5, 5]} intensity={1.5} />

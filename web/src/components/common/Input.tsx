@@ -9,7 +9,6 @@ import tw from 'tailwind-styled-components';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   ref?: React.Ref<HTMLButtonElement>;
-
   iconNode?: StaticImport;
   input?: IInputValue;
 }

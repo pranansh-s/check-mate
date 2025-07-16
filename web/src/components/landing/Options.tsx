@@ -9,11 +9,11 @@ import tw from 'tailwind-styled-components';
 import Button from '@/components/common/Button';
 
 import { auth } from '@/lib/firebase';
+import { getErrorMessage } from '@/lib/utils/error';
 import { createRoom } from '@/lib/utils/room';
 import { openModal } from '@/redux/features/modalSlice';
-import { getErrorMessage } from '@/lib/utils/error';
 
-const Options: React.FC = () => {
+const Options = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -29,11 +29,9 @@ const Options: React.FC = () => {
     try {
       const key = await createRoom();
       router.push(`/room/${key}`);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to create room: ', getErrorMessage(err));
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };

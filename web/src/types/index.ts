@@ -1,5 +1,5 @@
+import { Color, Position } from '@check-mate/shared/types';
 import { Group } from 'three';
-import { Position, Color } from "@check-mate/shared/types";
 
 export type ModalType = 'gameSettings' | 'joinRoom' | 'waiting' | null;
 

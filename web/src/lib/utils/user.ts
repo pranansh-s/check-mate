@@ -1,4 +1,3 @@
-import { UserProfile } from '@/types';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -58,4 +57,8 @@ export const logOut = async () => {
   } catch (err) {
     console.error('Failed logout: ', err);
   }
+};
+
+export const getUserId = () => {
+  return auth.currentUser?.uid;
 };

@@ -90,7 +90,7 @@ const BackgroundPieces = memo(() => {
   );
 });
 
-const BackgroundScene: React.FC = () => {
+const BackgroundScene = () => {
   return (
     <SceneContainer>
       <Canvas>

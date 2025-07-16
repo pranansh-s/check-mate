@@ -3,13 +3,11 @@
 import { memo, useCallback, useRef, useState } from 'react';
 
 import { gameTypeOptions } from '@/constants';
+import SocketService from '@/services/socket.service';
 import { GameConfig } from '@check-mate/shared/types';
 import { Canvas, useFrame } from '@react-three/fiber';
 import tw from 'tailwind-styled-components';
 import { Group, MathUtils } from 'three';
-
-import { auth } from '@/lib/firebase';
-import { createNewGameForRoom } from '@/lib/utils/game';
 
 import Button from '../common/Button';
 import ChessModel, { IChessModelProps } from '../common/ChessModel';
@@ -51,105 +49,102 @@ const AnimatedChessModel: React.FC<IAnimatedChessModelProps> = ({ animate, targe
   return <ChessModel ref={groupRef} modelPath="../models/king.fbx" {...props} />;
 };
 
-const GameSettings: React.FC<{ roomId: string }> = memo(
-  ({ roomId }) => {
-    const [hoveredSide, setHoveredSide] = useState<string | null>(null);
+const GameSettings = memo(() => {
+  const [hoveredSide, setHoveredSide] = useState<string | null>(null);
 
-    const [selectedSide, setSelectedSide] = useState<string | null>(null);
-    const [selectedType, setSelectedType] = useState<string>(gameTypeOptions[0].type);
-    const [loading, setLoading] = useState<boolean>(false);
+  const [selectedSide, setSelectedSide] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>(gameTypeOptions[0].type);
+  const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSetConfig = useCallback(async () => {
-      setLoading(true);
+  const handleSetConfig = useCallback(async () => {
+    setLoading(true);
 
-      const playerSide = selectedSide !== 'random' ? selectedSide : Math.round(Math.random()) === 0 ? 'white' : 'black';
-      const config = {
-        playerSide,
-        gameType: selectedType,
-      } as GameConfig;
+    const playerSide = selectedSide !== 'random' ? selectedSide : Math.round(Math.random()) === 0 ? 'white' : 'black';
+    const config = {
+      playerSide,
+      gameType: selectedType,
+    } as GameConfig;
 
-      await createNewGameForRoom(roomId, config);
-      setLoading(false);
-    }, [selectedSide, selectedType]);
+    SocketService.newGame(config);
+    setLoading(false);
+  }, [selectedSide, selectedType]);
 
-    return (
-      <ModalContainer className="max-w-[368px]">
-        <ChooseSideContainer>
-          <ChooseOption
-            $isSelected={selectedSide == 'black'}
-            onClick={() => setSelectedSide('black')}
-            onMouseEnter={() => setHoveredSide('black')}
-            onMouseLeave={() => setHoveredSide(null)}
-            className="bg-white"
-          >
-            <Canvas>
-              <Lighting />
-              <AnimatedChessModel
-                color="#505050"
-                rotation={[0, 0, 0.8]}
-                targetRotation={-0.8}
-                animate={hoveredSide == 'black' || selectedSide == 'black'}
-              />
-            </Canvas>
-          </ChooseOption>
-          <ChooseOption
-            $isSelected={selectedSide == 'white'}
-            onClick={() => setSelectedSide('white')}
-            onMouseEnter={() => setHoveredSide('white')}
-            onMouseLeave={() => setHoveredSide(null)}
-            className="bg-black"
-          >
-            <Canvas>
-              <Lighting />
-              <AnimatedChessModel
-                color="#ffffff"
-                rotation={[0, 0, -0.8]}
-                targetRotation={0.8}
-                animate={hoveredSide == 'white' || selectedSide == 'white'}
-              />
-            </Canvas>
-          </ChooseOption>
-          <ChooseOption
-            $isSelected={selectedSide == 'random'}
-            onClick={() => setSelectedSide('random')}
-            onMouseEnter={() => setHoveredSide('random')}
-            onMouseLeave={() => setHoveredSide(null)}
-            className="bg-[linear-gradient(135deg,_black_0%,_black_50%,_white_50%,_white_100%)]"
-          >
-            <Canvas>
-              <Lighting />
-              <AnimatedChessModel
-                color="#505050"
-                position={[-0.25, -0.25, -0.25]}
-                rotation={[0, 0, -0.8]}
-                targetRotation={0.8}
-                animate={hoveredSide == 'random' || selectedSide == 'random'}
-              />
-              <AnimatedChessModel
-                color="#ffffff"
-                position={[0.25, -0.25, 0]}
-                rotation={[0, 0, 0.8]}
-                targetRotation={-0.8}
-                animate={hoveredSide == 'random' || selectedSide == 'random'}
-              />
-            </Canvas>
-          </ChooseOption>
-        </ChooseSideContainer>
-        <ChooseGameType onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value)}>
-          {gameTypeOptions.map(({ name, type }, idx: number) => (
-            <option value={type} key={`game-type-${idx}`}>
-              {name}
-            </option>
-          ))}
-        </ChooseGameType>
-        <Button onClick={handleSetConfig} isLoading={loading} disabled={selectedSide == undefined} themeColor="blue">
-          start
-        </Button>
-      </ModalContainer>
-    );
-  },
-  (prev, next) => prev.roomId === next.roomId
-);
+  return (
+    <ModalContainer className="max-w-[368px]">
+      <ChooseSideContainer>
+        <ChooseOption
+          $isSelected={selectedSide == 'black'}
+          onClick={() => setSelectedSide('black')}
+          onMouseEnter={() => setHoveredSide('black')}
+          onMouseLeave={() => setHoveredSide(null)}
+          className="bg-white"
+        >
+          <Canvas>
+            <Lighting />
+            <AnimatedChessModel
+              color="#505050"
+              rotation={[0, 0, 0.8]}
+              targetRotation={-0.8}
+              animate={hoveredSide == 'black' || selectedSide == 'black'}
+            />
+          </Canvas>
+        </ChooseOption>
+        <ChooseOption
+          $isSelected={selectedSide == 'white'}
+          onClick={() => setSelectedSide('white')}
+          onMouseEnter={() => setHoveredSide('white')}
+          onMouseLeave={() => setHoveredSide(null)}
+          className="bg-black"
+        >
+          <Canvas>
+            <Lighting />
+            <AnimatedChessModel
+              color="#ffffff"
+              rotation={[0, 0, -0.8]}
+              targetRotation={0.8}
+              animate={hoveredSide == 'white' || selectedSide == 'white'}
+            />
+          </Canvas>
+        </ChooseOption>
+        <ChooseOption
+          $isSelected={selectedSide == 'random'}
+          onClick={() => setSelectedSide('random')}
+          onMouseEnter={() => setHoveredSide('random')}
+          onMouseLeave={() => setHoveredSide(null)}
+          className="bg-[linear-gradient(135deg,_black_0%,_black_50%,_white_50%,_white_100%)]"
+        >
+          <Canvas>
+            <Lighting />
+            <AnimatedChessModel
+              color="#505050"
+              position={[-0.25, -0.25, -0.25]}
+              rotation={[0, 0, -0.8]}
+              targetRotation={0.8}
+              animate={hoveredSide == 'random' || selectedSide == 'random'}
+            />
+            <AnimatedChessModel
+              color="#ffffff"
+              position={[0.25, -0.25, 0]}
+              rotation={[0, 0, 0.8]}
+              targetRotation={-0.8}
+              animate={hoveredSide == 'random' || selectedSide == 'random'}
+            />
+          </Canvas>
+        </ChooseOption>
+      </ChooseSideContainer>
+      <ChooseGameType onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value)}>
+        {gameTypeOptions.map(({ name, type }, idx: number) => (
+          <option value={type} key={`game-type-${idx}`}>
+            {name}
+          </option>
+        ))}
+      </ChooseGameType>
+      <Button onClick={handleSetConfig} isLoading={loading} disabled={selectedSide == undefined} themeColor="blue">
+        start
+      </Button>
+    </ModalContainer>
+  );
+});
 
 export default GameSettings;
 

@@ -1,17 +1,12 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
-
 import { Game, Room } from '@check-mate/shared/types';
-import { collection, limit, onSnapshot, query, where } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
 
-import { auth, db } from '@/lib/firebase';
-import { parseGame, updatePlayerSide } from '@/lib/utils/game';
-import { goToMove, initMoves, movePiece } from '@/redux/features/boardSlice';
-import { beginTurn, initGameState } from '@/redux/features/gameSlice';
-import { closeModal, openModal } from '@/redux/features/modalSlice';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { getUserId } from '@/lib/utils/user';
+import useRoomInit from '@/hooks/useRoomInit';
+import useSocketInit from '@/hooks/useSocketInit';
+import { useAppSelector } from '@/redux/hooks';
 
 import GameBar from '../game-bar';
 import GameSettings from '../modals/GameSettings';
@@ -26,75 +21,52 @@ interface IRoomProps {
 
 const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
   const activeModal = useAppSelector(state => state.modals);
-  const dispatch = useAppDispatch();
+  const userId = getUserId();
 
-  const initGame = useCallback(
-    (currentGame: Game) => {
-      dispatch(initMoves(currentGame.moves));
-      dispatch(initGameState(currentGame));
-    },
-    [dispatch]
-  );
+  useRoomInit(room, game, userId);
+  useSocketInit(roomId, userId);
 
-  useEffect(() => {
-    if (!auth.currentUser) return;
-
-    const initRoom = () => {
-      if (game) {
-        initGame(game);
-        return;
-      }
-
-      const isOwner = room.createdBy === auth.currentUser?.uid;
-      dispatch(openModal(isOwner ? 'gameSettings' : 'waiting'));
-    }
-
-    initRoom();
-  }, [dispatch, game, auth.currentUser, initGame]);
-
-  useEffect(() => {
-    const gamesQuery = query(
-      collection(db, 'games'),
-      where('roomId', '==', roomId),
-      where('active', '==', true),
-      limit(1)
-    );
-    const gameUnsubscribe = onSnapshot(
-      gamesQuery,
-      snapshot => {
-        if (snapshot.empty) return;
-        snapshot.docChanges().forEach(async change => {
-          const gameDoc = change.doc;
-          const gameData = gameDoc.data() as Game;
-          const parsedGame = parseGame(gameDoc.id, auth.currentUser!.uid, gameData);
-
-          if (change.type === 'added') {
-            await updatePlayerSide(gameDoc.id, gameData, auth.currentUser!.uid);
-            if (!game) {
-              initGame(parsedGame);
-              dispatch(closeModal());
-            }
-          } else if (change.type === 'modified' && parsedGame.playerSide === parsedGame.playerTurn) {
-            const opponentMove = parsedGame.moves.at(-1);
-            if (opponentMove) {
-              dispatch(movePiece(opponentMove));
-              dispatch(goToMove(parsedGame.moves.length));
-              dispatch(beginTurn());
-            }
-          }
-        });
-      },
-      err => {
-        console.log('game listening error: ', err);
-      }
-    );
-
-    return gameUnsubscribe;
-  }, [roomId]);
+  // useEffect(() => {
+  //   const gamesQuery = query(
+  //     collection(db, 'games'),
+  //     where('roomId', '==', roomId),
+  //     where('active', '==', true),
+  //     limit(1)
+  //   );
+  //   const gameUnsubscribe = onSnapshot(
+  //     gamesQuery,
+  //     snapshot => {
+  //       if (snapshot.empty) return;
+  //       snapshot.docChanges().forEach(async change => {
+  //         const gameDoc = change.doc;
+  //         const gameData = gameDoc.data() as Game;
+  //         const parsedGame = parseGame(gameDoc.id, auth.currentUser!.uid, gameData);
+  //         if (change.type === 'added') {
+  //           await updatePlayerSide(gameDoc.id, gameData, auth.currentUser!.uid);
+  //           if (!game) {
+  //             initGame(parsedGame);
+  //             dispatch(closeModal());
+  //           }
+  //         } else if (change.type === 'modified' && parsedGame.playerSide === parsedGame.playerTurn) {
+  //           const opponentMove = parsedGame.moves.at(-1);
+  //           if (opponentMove) {
+  //             dispatch(movePiece(opponentMove));
+  //             dispatch(goToMove(parsedGame.moves.length));
+  //             dispatch(beginTurn());
+  //           }
+  //         }
+  //       });
+  //     },
+  //     err => {
+  //       console.log('game listening error: ', err);
+  //     }
+  //   );
+  //   return gameUnsubscribe;
+  // }, [roomId]);
 
   return (
     <RoomContainer>
-      {activeModal === 'gameSettings' && <GameSettings roomId={roomId} />}
+      {activeModal === 'gameSettings' && <GameSettings />}
       {activeModal === 'waiting' && <Waiting />}
       <Board />
       <GameBar />

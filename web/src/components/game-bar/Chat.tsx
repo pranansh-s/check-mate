@@ -3,6 +3,8 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
+import { MessageSchema } from '@check-mate/shared/schemas';
+import { ChatMessage } from '@check-mate/shared/types';
 import { doc, onSnapshot } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
 import { z } from 'zod';
@@ -11,9 +13,6 @@ import { db } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { sendMessage } from '@/lib/utils/room';
 import { strings } from '@/constants/strings';
-
-import { MessageSchema } from "@check-mate/shared/schemas";
-import { ChatMessage } from '@check-mate/shared/types';
 
 import sendIcon from '@/../public/icons/send.svg';
 import Button from '../common/Button';
@@ -29,7 +28,7 @@ const toTime = (val: number): string => {
   return timeString;
 };
 
-const Chat: React.FC = memo(() => {
+const Chat = memo(() => {
   const params = useParams();
   const roomId = params?.id as string;
 

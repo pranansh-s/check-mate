@@ -8,7 +8,7 @@ import { boardAfterMove, createInitialBoard, parseMove } from '@/lib/utils/chess
 import { goToMove } from '@/redux/features/boardSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 
-const MoveHistory: React.FC = () => {
+const MoveHistory = () => {
   const moveList = useAppSelector(state => state.board.moves);
   const dispatch = useAppDispatch();
 
