@@ -1,17 +1,11 @@
-import { Color, Position } from '@check-mate/shared/types';
+import { GameType } from '@check-mate/shared/types';
 import { Group } from 'three';
 
 export type ModalType = 'gameSettings' | 'joinRoom' | 'waiting' | null;
 
-export type PieceType = 'pawn' | 'rook' | 'knight' | 'bishop' | 'queen' | 'king';
-
-export type BoardMap = (Piece | null)[][];
-
-export interface Piece {
-  src: string;
-  type: PieceType;
-  color: Color;
-  pos: Position;
+export interface GameTypeOption {
+  name: string;
+  type: GameType;
 }
 
 export interface IInputValue {

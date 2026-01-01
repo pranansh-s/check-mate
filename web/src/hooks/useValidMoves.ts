@@ -1,11 +1,9 @@
 import { useCallback, useMemo } from 'react';
 
-import { BoardMap, Piece } from '@/types';
-import { Color } from '@check-mate/shared/types';
+import { Board, Color, Piece } from '@check-mate/shared/types';
+import { getValidMovesForPiece } from '@check-mate/shared/utils';
 
-import { getValidMovesForPiece } from '@/lib/utils/chess';
-
-const useValidMoves = (board: BoardMap, activePiece: Piece | null, side: Color) => {
+const useValidMoves = (board: Board, activePiece: Piece | null, side: Color) => {
   const validMoves = useMemo(
     () => (activePiece ? getValidMovesForPiece(board, activePiece, side) : []),
     [activePiece, board, side]

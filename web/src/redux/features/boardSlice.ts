@@ -1,12 +1,11 @@
-import { Piece } from '@/types';
-import { Move, Position } from '@check-mate/shared/types';
+import { Move, Piece, Position } from '@check-mate/shared/types';
+import { boardAfterMove, createBoardforPlayer } from '@check-mate/shared/utils';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { boardAfterMove, createInitialBoard } from '@/lib/utils/chess';
-
 const initialState = {
-  boardMap: createInitialBoard(),
+  boardMap: createBoardforPlayer(),
   moves: [] as Move[],
+  moveNotation: [] as string[],
   currentMoveIndex: 0,
   selectedPiece: null as Piece | null,
 };
@@ -23,27 +22,30 @@ const boardSlice = createSlice({
       }
 
       const updatedMoveList = [...state.moves, move];
-      const updatedMove = boardAfterMove(state.boardMap, move, piece);
+      const updatedBoard = boardAfterMove(state.boardMap, move, piece);
       return {
         ...state,
-        boardMap: updatedMove,
+        boardMap: updatedBoard,
         moves: updatedMoveList,
         selectedPiece: null,
       };
     },
 
-    initMoves: (_, action: PayloadAction<Move[]>) => {
+    initMoves: (state, action: PayloadAction<Move[]>) => {
       const moveList = action.payload;
 
-      let board = createInitialBoard();
-      moveList.forEach((move: Move) => {
-        const piece = board[move.from.y][move.from.x];
-        if (!piece) return;
+      let board = createBoardforPlayer();
+      board = moveList.reduce((currentBoard, move) => {
+        const piece = currentBoard[move.from.y][move.from.x];
+        if (!piece) {
+          throw new Error('Move without a piece');
+        }
 
-        board = boardAfterMove(board, move, piece);
-      });
+        return boardAfterMove(currentBoard, move, piece);
+      }, board);
 
       return {
+        ...state,
         boardMap: board,
         moves: moveList,
         currentMoveIndex: moveList.length,
@@ -56,7 +58,8 @@ const boardSlice = createSlice({
       const index = action.payload;
       if (index < 0 || index > moveList.length) return;
 
-      let board = createInitialBoard();
+      let board = createBoardforPlayer();
+      //side issue
       for (let i = 0; i < index; i++) {
         const move = moveList[i];
         const piece = board[move.from.y][move.from.x];
@@ -75,9 +78,7 @@ const boardSlice = createSlice({
 
     selectPiece: (state, action: PayloadAction<Position>) => {
       const { x, y } = action.payload;
-      const piece = state.boardMap[y][x];
-
-      state.selectedPiece = piece;
+      state.selectedPiece = state.boardMap[y][x];
     },
 
     deSelectPiece: state => {

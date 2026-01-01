@@ -1,21 +1,21 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
 
+import SocketService from '@/services/socket.service';
 import { MessageSchema } from '@check-mate/shared/schemas';
 import { ChatMessage } from '@check-mate/shared/types';
-import { doc, onSnapshot } from 'firebase/firestore';
 import tw from 'tailwind-styled-components';
-import { z } from 'zod';
 
-import { db } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
-import { sendMessage } from '@/lib/utils/room';
+
 import { strings } from '@/constants/strings';
 
 import sendIcon from '@/../public/icons/send.svg';
 import Button from '../common/Button';
+import { z } from 'zod';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { addMessage } from '@/redux/features/chatSlice';
 
 const toTime = (val: number): string => {
   const date = new Date(val);
@@ -29,31 +29,27 @@ const toTime = (val: number): string => {
 };
 
 const Chat = memo(() => {
-  const params = useParams();
-  const roomId = params?.id as string;
-
   const endMessageRef = useRef<HTMLDivElement>(null);
-  const [chat, setChat] = useState<(ChatMessage | string)[]>([]);
+  const chat = useAppSelector(state => state.chatState);
   const [message, setMessage] = useState<string>('');
-  const [isSending, setIsSending] = useState<boolean>(false);
+  const [isSending, setIsSending] = useState<boolean>(false); 
 
-  const handleSendMessage = async () => {
+  const dispatch = useAppDispatch();
+
+  const handleSendMessage = () => {
     setIsSending(true);
     try {
-      if (chat.length >= 100) {
-        throw new Error('chat length exceeded create a new room');
-      }
       const content = MessageSchema.parse(message);
       setMessage('');
-      await sendMessage(roomId, content);
+      SocketService.sendMessage(content);
     } catch (err) {
       if (err instanceof z.ZodError) {
-        setChat([...chat, `~ ${err.errors[0].message} ~`]);
+        dispatch(addMessage(`~ ${err.errors[0].message} ~`));
       } else {
         handleErrors(err, 'could not send message');
       }
     } finally {
-      setTimeout(() => setIsSending(false), 1000);
+      setIsSending(false);
     }
   };
 
@@ -67,21 +63,6 @@ const Chat = memo(() => {
   useEffect(() => {
     endMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat]);
-
-  useEffect(() => {
-    const chatUnsubscribe = onSnapshot(
-      doc(db, 'rooms', roomId),
-      snapshot => {
-        if (!snapshot.exists() || !snapshot.data().chat) return;
-        const fetchedMessages = snapshot.data().chat as ChatMessage[];
-        setChat(fetchedMessages);
-      },
-      err => {
-        console.log('messages listening error: ', err);
-      }
-    );
-    return chatUnsubscribe;
-  }, [roomId]);
 
   return (
     <ChatContainer>

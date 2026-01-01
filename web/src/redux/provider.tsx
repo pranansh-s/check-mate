@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import UserService from '@/services/user.service';
 import { Profile } from '@check-mate/shared/types';
 import { onAuthStateChanged, onIdTokenChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -9,7 +10,6 @@ import { Provider } from 'react-redux';
 
 import { auth, db } from '@/lib/firebase';
 import { setAccessToken } from '@/lib/utils/auth';
-import { logOut, refreshProfile } from '@/lib/utils/user';
 
 import { onUpdate } from './features/userSlice';
 import { store } from './store';
@@ -35,7 +35,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      refreshProfile(user.uid);
+      UserService.refreshProfile(user.uid);
       return onSnapshot(
         doc(db, 'profiles', user.uid),
         snapshot => {
@@ -45,7 +45,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
         error => {
           console.log('profile listener error:', error);
-          logOut();
+          UserService.logOut();
         }
       );
     });

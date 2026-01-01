@@ -8,11 +8,12 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 
+import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { createProfile } from '@/lib/utils/user';
-import { useForm } from '@/hooks/useForm';
 import { UserRegisterSchema } from '@/schema/UserSchema';
+
 import { strings } from '@/constants/strings';
 
 import mailIcon from '@/../public/icons/mail.svg';

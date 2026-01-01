@@ -4,8 +4,7 @@ import { memo } from 'react';
 import Image from 'next/image';
 
 import SocketService from '@/services/socket.service';
-import { Piece } from '@/types';
-import { Move, Position } from '@check-mate/shared/types';
+import { Move, Piece, Position } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
 
 import { handleErrors } from '@/lib/utils/error';
@@ -35,7 +34,7 @@ const Cell: React.FC<ICellProps> = memo(({ piece, currentPos, isPossibleMove }) 
     } catch (err) {
       handleErrors(err, 'Failed to move piece');
     }
-  }
+  };
 
   const handleClick = () => {
     if (selectedPiece) {

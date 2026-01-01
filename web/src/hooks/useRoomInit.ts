@@ -6,13 +6,15 @@ import { initMoves } from '@/redux/features/boardSlice';
 import { initGameState } from '@/redux/features/gameSlice';
 import { openModal } from '@/redux/features/modalSlice';
 import { useAppDispatch } from '@/redux/hooks';
+import { initMessages } from '@/redux/features/chatSlice';
+import SocketService from '@/services/socket.service';
 
-const useRoomInit = (currentRoom: Room, existingGame: Game | null, userId?: string) => {
+const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Game | null, userId?: string) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!userId) return;
-
+    
     if (existingGame) {
       dispatch(initMoves(existingGame.moves));
       dispatch(initGameState(existingGame));
@@ -21,6 +23,10 @@ const useRoomInit = (currentRoom: Room, existingGame: Game | null, userId?: stri
 
     const isOwner = currentRoom.createdBy === userId;
     dispatch(openModal(isOwner ? 'gameSettings' : 'waiting'));
+    dispatch(initMessages(currentRoom.chat));
+    
+    SocketService.initSocket(currentRoomId, userId, dispatch);
+    return SocketService.leaveRoom;
   }, [existingGame, userId, dispatch]);
 };
 

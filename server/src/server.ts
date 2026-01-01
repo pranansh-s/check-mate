@@ -20,9 +20,9 @@ const io = configSocket(server);
 
 io.on("connection", SocketController);
 
-app.use(helmet());
 app.use(appCors);
 app.use(appRateLimiter);
+app.use(helmet());
 app.use(express.json());
 
 app.use(roomRoutes);

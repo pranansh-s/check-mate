@@ -14,7 +14,6 @@ export const strings = {
     roomKeyPlaceholder: 'XXXX-XXXX',
     messagePlaceholder: 'type here to chat...',
     errors: {
-      regex: 'must follow c1A0-Df23 format',
       roomJoinFail: 'could not join room',
       roomCreateFail: 'could not create room',
     },
@@ -25,16 +24,6 @@ export const strings = {
     emailPlaceholder: 'email',
     displayNamePlaceholder: 'username',
     errors: {
-      invalidEmail: 'enter a valid email address',
-      invalidPassword: {
-        lowerCaseCharacter: 'password must contain at least one lowercase letter',
-        upperCaseCharacter: 'password must contain at least one uppercase letter',
-        number: 'password must contain at least one number',
-        maxLength: 'password must be at most 16 characters long',
-        minLength: 'password must be at least 8 characters long',
-      },
-      invalidDisplayName: 'display name is required',
-      nonMatchingPassword: 'passwords do not match',
       loginFail: 'login failed',
       registerFail: 'register failed',
     },

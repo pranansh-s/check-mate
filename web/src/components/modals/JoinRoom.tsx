@@ -9,9 +9,10 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import ModalContainer from '@/components/modals/Modal';
 
+import { useForm } from '@/hooks/useForm';
 import { handleErrors } from '@/lib/utils/error';
 import { formatRoomKey } from '@/lib/utils/room';
-import { useForm } from '@/hooks/useForm';
+
 import { strings } from '@/constants/strings';
 
 const JoinRoom = memo(() => {

@@ -1,11 +1,10 @@
 'use client';
 
+import UserService from '@/services/user.service';
 import { Game, Room } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
 
-import { getUserId } from '@/lib/utils/user';
 import useRoomInit from '@/hooks/useRoomInit';
-import useSocketInit from '@/hooks/useSocketInit';
 import { useAppSelector } from '@/redux/hooks';
 
 import GameBar from '../game-bar';
@@ -21,10 +20,9 @@ interface IRoomProps {
 
 const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
   const activeModal = useAppSelector(state => state.modals);
-  const userId = getUserId();
+  const userId = UserService.getUserId();
 
-  useRoomInit(room, game, userId);
-  useSocketInit(roomId, userId);
+  useRoomInit(roomId, room, game, userId);
 
   // useEffect(() => {
   //   const gamesQuery = query(

@@ -10,7 +10,6 @@ import { Providers } from '@/redux/provider';
 import './globals.css';
 
 const BackgroundScene = dynamic(() => import('@/components/landing/BackgroundScene'));
-
 const ProfileBubble = dynamic(() => import('@/components/profile-menu/ProfileBubble'), { ssr: false });
 
 export default function RootLayout({
@@ -27,7 +26,6 @@ export default function RootLayout({
         <Providers>
           <ToastContainer />
           <ProfileBubble />
-
           {children}
           <BackgroundScene />
         </Providers>

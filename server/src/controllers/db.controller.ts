@@ -17,7 +17,8 @@ class DatabaseController {
   static getInstance(): DatabaseController {
     return this.instance;
   }
-
+  
+  //propogate firebase console delete or modify for cache
   loadData = async <T extends object>(prefix: string, id: string): Promise<T | null> => {
     const cacheKey = `${prefix}:${id}`;
     try {

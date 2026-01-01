@@ -7,18 +7,19 @@ import { initMoves } from '@/redux/features/boardSlice';
 import { initGameState } from '@/redux/features/gameSlice';
 import { closeModal } from '@/redux/features/modalSlice';
 import { AppDispatch } from '@/redux/store';
+import { addMessage } from '@/redux/features/chatSlice';
 
 const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
 
 const SocketService = {
-  initListeners: (dispatch: AppDispatch) => {
+  initSocket: (roomId: string, userId: string, dispatch: AppDispatch) => {
     socket.on('error', (message: string) => {
       showErrorToast('Failed to process task', message);
     });
 
-    socket.on('recieveChatMessage', (newChatMessage: ChatMessage) => {});
-
-    socket.on('gameCreated', SocketService.joinGame);
+    socket.on('recieveChatMessage', (newChatMessage: ChatMessage) => {
+      dispatch(addMessage(newChatMessage));
+    });
 
     socket.on('gameJoined', (joinedGame: Game) => {
       dispatch(initMoves(joinedGame.moves));
@@ -26,12 +27,10 @@ const SocketService = {
       dispatch(closeModal());
     });
 
-    socket.on('gameUpdate', (updatedGame: Game) => {});
+    socket.on('gameCreated', () => socket.emit('joinGame'));
 
     socket.on('roomUpdate', (updatedRoom: Room) => {});
-  },
 
-  connectToRoom: (roomId: string, userId: string) => {
     socket.emit('joinRoom', roomId, userId);
   },
 
@@ -43,16 +42,12 @@ const SocketService = {
     socket.emit('newGame', config);
   },
 
-  joinGame: () => {
-    socket.emit('joinGame');
-  },
-
   makeMove: (move: Move) => {
     socket.emit('newMove', move);
   },
 
   leaveRoom: () => {
-    socket.emit('disconnect');
+    socket.disconnect();
   },
 };
 

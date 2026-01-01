@@ -9,10 +9,6 @@ const userSlice = createSlice({
       return action.payload;
     },
 
-    onLogout: () => {
-      return null;
-    },
-
     onUpdate: (state, action: PayloadAction<Partial<Profile>>) => {
       if (state) {
         return {
@@ -22,9 +18,13 @@ const userSlice = createSlice({
       }
       return state;
     },
+
+    onLogout: () => {
+      return null;
+    },
   },
 });
 
-export const { onLogin, onLogout, onUpdate } = userSlice.actions;
+export const { onLogin, onUpdate, onLogout } = userSlice.actions;
 
 export default userSlice.reducer;

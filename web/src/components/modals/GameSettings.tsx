@@ -4,7 +4,7 @@ import { memo, useCallback, useRef, useState } from 'react';
 
 import { gameTypeOptions } from '@/constants';
 import SocketService from '@/services/socket.service';
-import { GameConfig } from '@check-mate/shared/types';
+import { Color, GameConfig, GameType } from '@check-mate/shared/types';
 import { Canvas, useFrame } from '@react-three/fiber';
 import tw from 'tailwind-styled-components';
 import { Group, MathUtils } from 'three';
@@ -53,17 +53,18 @@ const GameSettings = memo(() => {
   const [hoveredSide, setHoveredSide] = useState<string | null>(null);
 
   const [selectedSide, setSelectedSide] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<string>(gameTypeOptions[0].type);
+  const [selectedType, setSelectedType] = useState<GameType>(gameTypeOptions[0].type);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSetConfig = useCallback(async () => {
+  const handleSetConfig = useCallback(() => {
     setLoading(true);
 
-    const playerSide = selectedSide !== 'random' ? selectedSide : Math.round(Math.random()) === 0 ? 'white' : 'black';
-    const config = {
+    const playerSide =
+      selectedSide !== 'random' ? (selectedSide as Color) : Math.round(Math.random()) === 0 ? 'white' : 'black';
+    const config: GameConfig = {
       playerSide,
       gameType: selectedType,
-    } as GameConfig;
+    };
 
     SocketService.newGame(config);
     setLoading(false);
@@ -132,7 +133,9 @@ const GameSettings = memo(() => {
           </Canvas>
         </ChooseOption>
       </ChooseSideContainer>
-      <ChooseGameType onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value)}>
+      <ChooseGameType
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value as GameType)}
+      >
         {gameTypeOptions.map(({ name, type }, idx: number) => (
           <option value={type} key={`game-type-${idx}`}>
             {name}

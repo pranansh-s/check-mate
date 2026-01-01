@@ -9,11 +9,10 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
   const { id } = await params;
 
   try {
-    const data = (await get_room(id)).data;
-    return <RoomClient roomId={id} {...data} />;
+    const res = await get_room(id);
+    return <RoomClient roomId={id} {...res.data} />;
   } catch (err) {
     //send error data with redirect for toast
-    //propogate firebase console delete or modify for cache
     console.error('Failed to join room: ', getErrorMessage(err));
     return redirect('/');
   }

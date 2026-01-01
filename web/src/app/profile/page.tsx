@@ -1,12 +1,12 @@
 'use client';
 
-import Button from '@/components/common/Button';
+import UserService from '@/services/user.service';
 
-import { logOut } from '@/lib/utils/user';
+import Button from '@/components/common/Button';
 
 export default function ProfilePage() {
   const handleLogout = async () => {
-    await logOut();
+    await UserService.logOut();
   };
 
   return (

@@ -33,7 +33,7 @@ router.get("/room/:id", handleAuthValidation, async (req, res, next) => {
       .catch((err) =>
         err instanceof ServiceError ? null : Promise.reject(err)
       );
-
+    
     res.status(200).json({
       room,
       game,

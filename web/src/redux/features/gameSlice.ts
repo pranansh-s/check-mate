@@ -1,7 +1,6 @@
+import UserService from '@/services/user.service';
 import { Color, Game, GameType } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { getUserId } from '@/lib/utils/user';
 
 const initialState = {
   isTurn: true,
@@ -15,7 +14,7 @@ const gameSlice = createSlice({
   reducers: {
     initGameState: (_, action: PayloadAction<Game>) => {
       const { playerTurn, whiteSidePlayer, blackSidePlayer, gameType } = action.payload;
-      const userId = getUserId();
+      const userId = UserService.getUserId();
       if (!userId) return;
 
       let playerSide: Color;

@@ -4,10 +4,12 @@ import { GameConfig } from "@check-mate/shared/types";
 import { handleErrors } from "../utils/socket.js";
 import RoomService from "../services/room.service.js";
 import GameService from "../services/game.service.js";
+import ChessService from "../services/chess.service.js";
 
 const SocketController = (socket: Socket) => {
-  let currentRoomId: string | null = null;
-  let currentUserId: string | null = null;
+  let currentRoomId: string;
+  let currentUserId: string;
+  let chess: ChessService;
 
   socket.on("joinRoom", async (roomId: string, userId: string) => {
     try {
@@ -20,7 +22,8 @@ const SocketController = (socket: Socket) => {
       currentRoomId = roomId;
       currentUserId = userId;
 
-      socket.emit("roomJoined");
+      const existingGame = await GameService.joinGame(roomId, userId);
+      chess = new ChessService(existingGame);
     } catch (err) {
       handleErrors(socket, "Failed to connect with room", err);
     }
@@ -30,34 +33,29 @@ const SocketController = (socket: Socket) => {
     if (!currentRoomId || !currentUserId) return;
 
     try {
-      const chatMessage = await RoomService.sendMessage(currentRoomId, currentUserId, message);
-      socket.to(currentRoomId).emit("recieveChatMessage", chatMessage);
+      const newMessage = await RoomService.sendMessage(currentRoomId, currentUserId, message);
+      socket.emit('recieveChatMessage', newMessage);
+      socket.to(currentRoomId).emit("recieveChatMessage", newMessage);
     } catch (err) {
       handleErrors(socket, "Failed to send chat message", err);
     }
   });
 
-  socket.on("newGame", async (config: GameConfig) => {
+  socket.on("newGame", async (config: GameConfig, otherUserId?: string) => {
     if (!currentRoomId || !currentUserId) return;
 
     try {
-      const game = await GameService.createGame(currentRoomId, currentUserId, config);
-      socket.emit("gameJoined", game);
-      socket.to(currentRoomId).emit("gameCreated");
+      let newGame = await GameService.createGame(currentRoomId, currentUserId, config);
+      if(otherUserId) {
+        newGame = await GameService.joinGame(currentRoomId, otherUserId);
+      }
+      
+      chess = new ChessService(newGame);
+
+      socket.emit("gameJoined", newGame);
+      socket.to(currentRoomId).emit("gameJoined", newGame);
     } catch (err) {
       handleErrors(socket, "Failed to create game", err);
-    }
-  });
-
-  socket.on("joinGame", async () => {
-    if (!currentRoomId || !currentUserId) return;
-
-    try {
-      const game = await GameService.joinGame(currentRoomId, currentUserId);
-      socket.emit("gameJoined", game);
-      socket.to(currentRoomId).emit("gameJoined", game);
-    } catch (err) {
-      handleErrors(socket, "Failed to join game", err);
     }
   });
 

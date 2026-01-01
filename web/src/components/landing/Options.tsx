@@ -25,6 +25,7 @@ const Options = () => {
       return;
     }
 
+    //create a possible loading hook that turns on promsise resolve
     setLoading(true);
     try {
       const key = await createRoom();

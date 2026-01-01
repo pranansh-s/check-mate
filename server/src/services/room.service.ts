@@ -80,6 +80,10 @@ const RoomService = {
     };
     
     const room = await RoomService.getRoom(roomId);
+    if (room.chat.length >= 100) {
+      throw new ServiceError("Messages full, create a new room");
+    }
+    
     const updatedRoom: Room = {
       ...room,
       chat: [...(room.chat || []), createdMessage],

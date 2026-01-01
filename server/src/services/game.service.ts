@@ -33,7 +33,7 @@ const GameService = {
     if (game.whiteSidePlayer?.userId === userId || game.blackSidePlayer?.userId === userId) {
       return game;
     }
-
+    
     const newPlayer: PlayerState = {
       userId,
       remainingTime: GAME_TIME_MS[game.gameType],
