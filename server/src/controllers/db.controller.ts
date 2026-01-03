@@ -36,7 +36,7 @@ class DatabaseController {
       return data;
     } catch (err) {
       console.error(`Database load operation failed for ${prefix}/${id}`);
-      throw new DatabaseError();
+      throw new DatabaseError;
     }
   };
 
@@ -47,7 +47,7 @@ class DatabaseController {
       await this.redis.setItem<T>(cacheKey, data);
     } catch (err) {
       console.error(`Database save operation failed for ${prefix}/${id}`);
-      throw new DatabaseError();
+      throw new DatabaseError;
     }
   };
 
@@ -58,7 +58,7 @@ class DatabaseController {
       await this.redis.removeItem(cacheKey);
     } catch (err) {
       console.error(`Database delete operation failed for ${prefix}/${id}`);
-      throw new DatabaseError();
+      throw new DatabaseError;
     }
   };
 }

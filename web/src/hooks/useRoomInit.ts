@@ -1,20 +1,23 @@
 import { useEffect } from 'react';
 
+import SocketService from '@/services/socket.service';
 import { Game, Room } from '@check-mate/shared/types';
 
 import { initMoves } from '@/redux/features/boardSlice';
+import { initMessages } from '@/redux/features/chatSlice';
 import { initGameState } from '@/redux/features/gameSlice';
 import { openModal } from '@/redux/features/modalSlice';
 import { useAppDispatch } from '@/redux/hooks';
-import { initMessages } from '@/redux/features/chatSlice';
-import SocketService from '@/services/socket.service';
 
 const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Game | null, userId?: string) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!userId) return;
-    
+
+    SocketService.initSocket(currentRoomId, userId, dispatch);
+    dispatch(initMessages(currentRoom.chat));
+
     if (existingGame) {
       dispatch(initMoves(existingGame.moves));
       dispatch(initGameState(existingGame));
@@ -23,11 +26,9 @@ const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Gam
 
     const isOwner = currentRoom.createdBy === userId;
     dispatch(openModal(isOwner ? 'gameSettings' : 'waiting'));
-    dispatch(initMessages(currentRoom.chat));
-    
-    SocketService.initSocket(currentRoomId, userId, dispatch);
+
     return SocketService.leaveRoom;
-  }, [existingGame, userId, dispatch]);
+  }, [currentRoomId, userId]);
 };
 
 export default useRoomInit;

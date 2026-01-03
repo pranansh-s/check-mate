@@ -6,16 +6,16 @@ import SocketService from '@/services/socket.service';
 import { MessageSchema } from '@check-mate/shared/schemas';
 import { ChatMessage } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
+import { z } from 'zod';
 
 import { handleErrors } from '@/lib/utils/error';
+import { addMessage } from '@/redux/features/chatSlice';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 
 import { strings } from '@/constants/strings';
 
 import sendIcon from '@/../public/icons/send.svg';
 import Button from '../common/Button';
-import { z } from 'zod';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { addMessage } from '@/redux/features/chatSlice';
 
 const toTime = (val: number): string => {
   const date = new Date(val);
@@ -32,7 +32,7 @@ const Chat = memo(() => {
   const endMessageRef = useRef<HTMLDivElement>(null);
   const chat = useAppSelector(state => state.chatState);
   const [message, setMessage] = useState<string>('');
-  const [isSending, setIsSending] = useState<boolean>(false); 
+  const [isSending, setIsSending] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
 

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import dbController from "../controllers/db.controller.js";
 import { ServiceError } from "../utils/error.js";
-import { Game, GameConfig, PlayerState } from "@check-mate/shared/types";
+import { Game, GameConfig, Move, PlayerState } from "@check-mate/shared/types";
 import { GAME_TIME_MS } from "../utils/game.js";
 
 const GAME_PREFIX = "games";
@@ -21,7 +21,18 @@ const GameService = {
     return dbController.saveData<Game>(GAME_PREFIX, game, id);
   },
 
-  makeMove: async () => {},
+  addMove: async (roomId: string, move: Move) => {
+    const gameId = roomToGameId.get(roomId);
+    if (!gameId) {
+      throw new ServiceError("No game in room");
+    }
+
+    let game = await GameService.getGame(gameId);
+    game.moves.push(move);
+    game.playerTurn = game.playerTurn == "white" ? "black" : "white";
+    //game state updates
+    await GameService.saveGame(game, gameId);
+  },
 
   joinGame: async (roomId: string, userId: string): Promise<Game> => {
     const gameId = roomToGameId.get(roomId);
@@ -53,7 +64,7 @@ const GameService = {
     return game;
   },
 
-  createGame: async (roomId: string, userId: string, config: GameConfig): Promise<Game> => {
+  createGame: async (config: GameConfig, roomId: string, userId: string, opponentUserId?: string): Promise<Game> => {
     const { playerSide, gameType } = config;
 
     const playerState: PlayerState = {
@@ -61,13 +72,18 @@ const GameService = {
       remainingTime: GAME_TIME_MS[gameType],
     };
 
+    const opponentPlayerState: PlayerState | null = opponentUserId ? {
+      userId: opponentUserId,
+      remainingTime: GAME_TIME_MS[gameType],
+    } : null;
+
     const newGame: Game = {
       moves: [],
       playerTurn: "white",
       state: "isWaiting",
 
-      whiteSidePlayer: playerSide == "white" ? playerState : null,
-      blackSidePlayer: playerSide == "black" ? playerState : null,
+      whiteSidePlayer: playerSide == "white" ? playerState : opponentPlayerState,
+      blackSidePlayer: playerSide == "black" ? playerState : opponentPlayerState,
       gameType,
       createdAt: Date.now(),
     };

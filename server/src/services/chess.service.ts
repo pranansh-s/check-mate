@@ -1,6 +1,4 @@
-//move a lot of chess validation to backend or possibly shared utils
-//abstract logic in frontend into hooks/functions to make more readable and SOLID friendly
-//useCallback, useMemo, memo usage improvement
+//TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
 import { boardAfterMove, createBoardforPlayer, getValidMovesForPiece, isInCheck, opponentSide } from "@check-mate/shared/utils";
@@ -13,11 +11,11 @@ class ChessService {
 	private readonly COLUMN_LETTERS = 'abcdefgh';
 	private readonly ROW_NUMBERS = '12345678';
 
-	constructor(newGame: Game) {
-		if(newGame.whiteSidePlayer) {
+	constructor(newGame: Game, userId: string) {
+		if(newGame.whiteSidePlayer?.userId == userId) {
 			this.mySide = "white";
 		}
-		else if(newGame.blackSidePlayer) {
+		else if(newGame.blackSidePlayer?.userId == userId) {
 			this.mySide = "black";
 		}
 		else {
@@ -39,8 +37,21 @@ class ChessService {
 		}, this.board);
 	}
 
+	makeMove = (move: Move) => {
+		const piece = this.board[move.from.y][move.from.x];
+		if(!piece) {
+			throw new ServiceError("Cannot move an empty piece");
+		}
+
+		if(!this.isValidMove(piece, move.to)) {
+			throw new ServiceError("Move not possible");
+		}
+
+		this.board = boardAfterMove(this.board, move, piece);
+	}
+
 	isValidMove = (piece: Piece, to: Position): boolean => {
-		return getValidMovesForPiece(this.board, piece, this.mySide).includes(to);
+		return getValidMovesForPiece(this.board, piece, this.mySide).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
 	}
 
 	isCheck = (move: Move): boolean => {

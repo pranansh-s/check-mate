@@ -1,13 +1,13 @@
-import { ChatMessage, Game, GameConfig, Move, Room } from '@check-mate/shared/types';
+import { ChatMessage, Game, GameConfig, Move } from '@check-mate/shared/types';
 import { io } from 'socket.io-client';
 
 import { showErrorToast } from '@/components/common/ErrorToast';
 
-import { initMoves } from '@/redux/features/boardSlice';
-import { initGameState } from '@/redux/features/gameSlice';
+import { initMoves, movePiece } from '@/redux/features/boardSlice';
+import { addMessage } from '@/redux/features/chatSlice';
+import { endTurn, initGameState } from '@/redux/features/gameSlice';
 import { closeModal } from '@/redux/features/modalSlice';
 import { AppDispatch } from '@/redux/store';
-import { addMessage } from '@/redux/features/chatSlice';
 
 const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
 
@@ -17,7 +17,7 @@ const SocketService = {
       showErrorToast('Failed to process task', message);
     });
 
-    socket.on('recieveChatMessage', (newChatMessage: ChatMessage) => {
+    socket.on('receiveChatMessage', (newChatMessage: ChatMessage) => {
       dispatch(addMessage(newChatMessage));
     });
 
@@ -27,9 +27,10 @@ const SocketService = {
       dispatch(closeModal());
     });
 
-    socket.on('gameCreated', () => socket.emit('joinGame'));
-
-    socket.on('roomUpdate', (updatedRoom: Room) => {});
+    socket.on('moveUpdate', (move: Move) => {
+      dispatch(movePiece(move));
+      dispatch(endTurn());
+    });
 
     socket.emit('joinRoom', roomId, userId);
   },

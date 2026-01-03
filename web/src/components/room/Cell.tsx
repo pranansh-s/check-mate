@@ -29,8 +29,6 @@ const Cell: React.FC<ICellProps> = memo(({ piece, currentPos, isPossibleMove }) 
   const performMove = (move: Move) => {
     try {
       SocketService.makeMove(move);
-      dispatch(movePiece(move));
-      dispatch(endTurn());
     } catch (err) {
       handleErrors(err, 'Failed to move piece');
     }

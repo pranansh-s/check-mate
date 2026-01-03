@@ -1,10 +1,11 @@
 import { Socket } from "socket.io";
 
-import { GameConfig } from "@check-mate/shared/types";
+import { GameConfig, Move } from "@check-mate/shared/types";
 import { handleErrors } from "../utils/socket.js";
 import RoomService from "../services/room.service.js";
 import GameService from "../services/game.service.js";
 import ChessService from "../services/chess.service.js";
+import { ServiceError } from "../utils/error.js";
 
 const SocketController = (socket: Socket) => {
   let currentRoomId: string;
@@ -22,10 +23,12 @@ const SocketController = (socket: Socket) => {
       currentRoomId = roomId;
       currentUserId = userId;
 
-      const existingGame = await GameService.joinGame(roomId, userId);
-      chess = new ChessService(existingGame);
+      const existingGame = await GameService.joinGame(roomId, userId).catch((err) => err instanceof ServiceError ? null : Promise.reject(err));
+      if(existingGame) {
+        chess = new ChessService(existingGame, currentUserId);
+      }
     } catch (err) {
-      handleErrors(socket, "Failed to connect with room", err);
+      handleErrors(socket, "Failed to connect with room:", err);
     }
   });
 
@@ -34,28 +37,40 @@ const SocketController = (socket: Socket) => {
 
     try {
       const newMessage = await RoomService.sendMessage(currentRoomId, currentUserId, message);
-      socket.emit('recieveChatMessage', newMessage);
-      socket.to(currentRoomId).emit("recieveChatMessage", newMessage);
+      socket.emit('receiveChatMessage', newMessage);
+      socket.to(currentRoomId).emit("receiveChatMessage", newMessage);
     } catch (err) {
-      handleErrors(socket, "Failed to send chat message", err);
+      handleErrors(socket, "Failed to send chat message:", err);
     }
   });
 
-  socket.on("newGame", async (config: GameConfig, otherUserId?: string) => {
+  socket.on("newGame", async (config: GameConfig) => {
     if (!currentRoomId || !currentUserId) return;
 
     try {
-      let newGame = await GameService.createGame(currentRoomId, currentUserId, config);
-      if(otherUserId) {
-        newGame = await GameService.joinGame(currentRoomId, otherUserId);
-      }
+      let otherUserId = (await RoomService.getRoom(currentRoomId)).participants.find((id) => id !== currentUserId);
+      let newGame = await GameService.createGame(config, currentRoomId, currentUserId, otherUserId);
       
-      chess = new ChessService(newGame);
+      chess = new ChessService(newGame, currentUserId);
 
       socket.emit("gameJoined", newGame);
       socket.to(currentRoomId).emit("gameJoined", newGame);
     } catch (err) {
-      handleErrors(socket, "Failed to create game", err);
+      handleErrors(socket, "Failed to create game:", err);
+    }
+  });
+
+  socket.on("newMove", async (move: Move) => {
+    if (!currentRoomId || !currentUserId || !chess) return;
+
+    try {
+      chess.makeMove(move);
+      await GameService.addMove(currentRoomId, move);
+      
+      socket.emit("moveUpdate", move);
+      socket.to(currentRoomId).emit("moveUpdate", move);
+    } catch (err) {
+      handleErrors(socket, "Failed to update move:", err);
     }
   });
 
@@ -66,7 +81,7 @@ const SocketController = (socket: Socket) => {
       const room = await RoomService.leaveRoom(currentRoomId, currentUserId);
       socket.to(currentRoomId).emit("roomUpdate", room);
     } catch (err) {
-      handleErrors(socket, "Failed to leave room", err);
+      handleErrors(socket, "Failed to leave room:", err);
     }
   });
 };

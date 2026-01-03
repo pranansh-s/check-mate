@@ -20,7 +20,7 @@ class FirebaseService {
       return docSnapshot.exists ? (docSnapshot.data() as T) : null;
     } catch (err) {
       console.error("Firebase GET failed:", err);
-      throw new Error();
+      throw new Error;
     }
   };
 
@@ -29,7 +29,7 @@ class FirebaseService {
       return this.db.collection(collection).doc(id).set(data);
     } catch (err) {
       console.error("Firebase SET failed:", err);
-      throw new Error();
+      throw new Error;
     }
   };
 
@@ -38,7 +38,7 @@ class FirebaseService {
       return this.db.collection(collection).doc(id).delete();
     } catch (err) {
       console.error("Firebase DEL failed:", err);
-      throw new Error();
+      throw new Error;
     }
   };
 }

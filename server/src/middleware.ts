@@ -45,7 +45,7 @@ export const handleAuthValidation = async (
 ) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) {
-    return next(new ForbiddenError());
+    return next(new ForbiddenError);
   }
 
   try {
@@ -54,6 +54,6 @@ export const handleAuthValidation = async (
     next();
   }
   catch (err) {
-    next(new UnauthorizedError());
+    next(new UnauthorizedError);
   }
 };
