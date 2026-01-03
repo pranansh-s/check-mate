@@ -1,3 +1,4 @@
+import ChessService from '@/services/chess.service';
 import { Move, Piece, Position } from '@check-mate/shared/types';
 import { boardAfterMove, createBoardforPlayer } from '@check-mate/shared/utils';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -23,10 +24,14 @@ const boardSlice = createSlice({
 
       const updatedMoveList = [...state.moves, move];
       const updatedBoard = boardAfterMove(state.boardMap, move, piece);
+      const updatedNotation = [...state.moveNotation, ChessService.getMoveNotation(state.boardMap, move)];
+
       return {
         ...state,
         boardMap: updatedBoard,
         moves: updatedMoveList,
+        moveNotation: updatedNotation,
+        currentMoveIndex: state.currentMoveIndex + 1,
         selectedPiece: null,
       };
     },
@@ -35,19 +40,22 @@ const boardSlice = createSlice({
       const moveList = action.payload;
 
       let board = createBoardforPlayer();
-      board = moveList.reduce((currentBoard, move) => {
-        const piece = currentBoard[move.from.y][move.from.x];
+      const notationList: string[] = [];
+      for (const move of moveList) {
+        const piece = board[move.from.y][move.from.x];
         if (!piece) {
           throw new Error('Move without a piece');
         }
-
-        return boardAfterMove(currentBoard, move, piece);
-      }, board);
-
+        
+        notationList.push(ChessService.getMoveNotation(board, move));
+        board = boardAfterMove(board, move, piece);
+      }
+      
       return {
         ...state,
         boardMap: board,
         moves: moveList,
+        moveNotation: notationList,
         currentMoveIndex: moveList.length,
         selectedPiece: null,
       };
@@ -63,7 +71,9 @@ const boardSlice = createSlice({
       for (let i = 0; i < index; i++) {
         const move = moveList[i];
         const piece = board[move.from.y][move.from.x];
-        if (!piece) return;
+        if (!piece) {
+          throw new Error('Move without a piece');
+        }
 
         board = boardAfterMove(board, move, piece);
       }

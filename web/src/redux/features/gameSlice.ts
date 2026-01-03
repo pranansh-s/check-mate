@@ -32,15 +32,11 @@ const gameSlice = createSlice({
     },
 
     endTurn: state => {
-      state.isTurn = false;
-    },
-
-    beginTurn: state => {
-      state.isTurn = true;
-    },
+      state.isTurn = !state.isTurn;
+    }
   },
 });
 
-export const { initGameState, endTurn, beginTurn } = gameSlice.actions;
+export const { initGameState, endTurn } = gameSlice.actions;
 
 export default gameSlice.reducer;

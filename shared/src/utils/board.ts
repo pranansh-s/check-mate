@@ -9,7 +9,7 @@ const createPiece = (type: PieceType, color: Color, x: number, y: number): Piece
   pos: { x, y },
 });
 
-export const createBoardforPlayer = (playerSide?: Color) => {
+export const createBoardforPlayer = (playerSide?: Color): Board => {
   const board: Board = Array(8)
     .fill(null)
     .map(() => Array(8).fill(null));
