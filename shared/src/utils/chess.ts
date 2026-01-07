@@ -68,10 +68,10 @@ export const getValidMovesForPiece = (board: Board, piece: Piece, player: Color)
       break;
   }
 
-  return validMoves.filter(to => !isInCheck(board, { from: piece.pos, to }, player));
+  return validMoves.filter(to => !willMoveCheck(board, { from: piece.pos, to }, player));
 };
 
-export const isInCheck = (board: Board, move: Move, kingColor: Color): boolean => {
+export const willMoveCheck = (board: Board, move: Move, kingColor: Color): boolean => {
 	const movingPiece = board[move.from.y][move.from.x];
   if (!movingPiece) return false;
    

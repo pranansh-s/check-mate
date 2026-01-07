@@ -1,8 +1,9 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
-import { boardAfterMove, createBoardforPlayer, getValidMovesForPiece, isInCheck } from "@check-mate/shared/utils";
+import { boardAfterMove, createBoardforPlayer, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
 import { ServiceError } from "../utils/error.js";
+import GameService from "./game.service.js";
 
 class ChessService {
 	private board: Board;
@@ -34,7 +35,24 @@ class ChessService {
 		}, this.board);
 	}
 
-	makeMove = (move: Move) => {
+	private isValidMove = (piece: Piece, to: Position): boolean => {
+		return getValidMovesForPiece(this.board, piece, this.mySide).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
+	}
+	
+	private isCheckMate = (): boolean => {
+		let opponent = opponentSide(this.mySide);
+		const myPieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
+		for(const piece of myPieces) {
+			const validMoves = getValidMovesForPiece(this.board, piece, opponent);
+			if(validMoves.length > 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	makeMove = async (roomId: string, move: Move) => {
 		const piece = this.board[move.from.y][move.from.x];
 		if(!piece) {
 			throw new ServiceError("Cannot move an empty piece");
@@ -45,14 +63,9 @@ class ChessService {
 		}
 
 		this.board = boardAfterMove(this.board, move, piece);
-	}
+		await GameService.addMove(roomId, move);
 
-	isValidMove = (piece: Piece, to: Position): boolean => {
-		return getValidMovesForPiece(this.board, piece, this.mySide).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
-	}
-
-	isCheck = (move: Move): boolean => {
-		return isInCheck(this.board, move, this.mySide);
+		let mate = this.isCheckMate();
 	}
 }
 

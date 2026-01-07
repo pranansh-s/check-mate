@@ -4,6 +4,7 @@ import dbController from "../controllers/db.controller.js";
 import { ServiceError } from "../utils/error.js";
 import { Game, GameConfig, Move, PlayerState } from "@check-mate/shared/types";
 import { GAME_TIME_MS } from "../utils/game.js";
+import { opponentSide } from "@check-mate/shared/utils";
 
 const GAME_PREFIX = "games";
 const roomToGameId = new Map<string, string>();
@@ -29,7 +30,7 @@ const GameService = {
 
     let game = await GameService.getGame(gameId);
     game.moves.push(move);
-    game.playerTurn = game.playerTurn == "white" ? "black" : "white";
+    game.playerTurn = opponentSide(game.playerTurn);
     //game state updates
     await GameService.saveGame(game, gameId);
   },

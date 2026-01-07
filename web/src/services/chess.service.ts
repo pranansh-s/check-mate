@@ -1,5 +1,5 @@
 import { Board, Move } from "@check-mate/shared/types";
-import { isInCheck, opponentSide } from "@check-mate/shared/utils";
+import { willMoveCheck, opponentSide } from "@check-mate/shared/utils";
 	
 const COLUMN_LETTERS = 'abcdefgh';
 const ROW_NUMBERS = '12345678';
@@ -16,7 +16,7 @@ const ChessService = {
 
 		const pieceSymbol = { king: 'K', queen: 'Q', rook: 'R', bishop: 'B', knight: 'N', pawn: '' }[piece.type];
 		const isCapture = !!board[move.to.y][move.to.x];
-		const isCheck = isInCheck(board, move, opponentSide(piece.color));
+		const isCheck = willMoveCheck(board, move, opponentSide(piece.color));
 
 		if (piece.type === 'king' && Math.abs(move.from.x - move.to.x) == 2) {
 			return move.to.x > move.from.x ? 'O-O' : 'O-O-O';

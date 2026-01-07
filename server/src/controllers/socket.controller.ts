@@ -64,8 +64,7 @@ const SocketController = (socket: Socket) => {
     if (!currentRoomId || !currentUserId || !chess) return;
 
     try {
-      chess.makeMove(move);
-      await GameService.addMove(currentRoomId, move);
+      await chess.makeMove(currentRoomId, move);
       
       socket.emit("moveUpdate", move);
       socket.to(currentRoomId).emit("moveUpdate", move);

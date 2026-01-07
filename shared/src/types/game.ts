@@ -4,8 +4,8 @@ export type GameType = "30m" | "10m" | "3m";
 export type GameState =
   | "isWaiting"
   | "isPlaying"
-  | "whiteWon"
-  | "blackWon"
+  | "whiteWin"
+  | "blackWin"
   | "draw";
 
 export interface GameConfig {
