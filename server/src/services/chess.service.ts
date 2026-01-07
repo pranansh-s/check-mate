@@ -1,4 +1,5 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
+//refresh page join game, first move on init game fails, getGame for room abstraction, init roomToGameId, currentRoomId, etc on server restart
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
 import { boardAfterMove, createBoardforPlayer, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
@@ -39,7 +40,7 @@ class ChessService {
 		return getValidMovesForPiece(this.board, piece, this.mySide).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
 	}
 	
-	private isCheckMate = (): boolean => {
+	isDraw = (): boolean => {
 		let opponent = opponentSide(this.mySide);
 		const myPieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
 		for(const piece of myPieces) {
@@ -63,9 +64,7 @@ class ChessService {
 		}
 
 		this.board = boardAfterMove(this.board, move, piece);
-		await GameService.addMove(roomId, move);
-
-		let mate = this.isCheckMate();
+		await GameService.addMove(roomId, move, this);
 	}
 }
 

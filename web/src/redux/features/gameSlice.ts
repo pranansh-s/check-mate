@@ -33,7 +33,7 @@ const gameSlice = createSlice({
 
     endTurn: state => {
       state.isTurn = !state.isTurn;
-    }
+    },
   },
 });
 

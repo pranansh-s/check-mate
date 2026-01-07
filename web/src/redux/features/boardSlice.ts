@@ -1,4 +1,4 @@
-import ChessService from '@/services/chess.service';
+import { getMoveNotation } from '@/lib/utils/chess';
 import { Move, Piece, Position } from '@check-mate/shared/types';
 import { boardAfterMove, createBoardforPlayer } from '@check-mate/shared/utils';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -24,7 +24,7 @@ const boardSlice = createSlice({
 
       const updatedMoveList = [...state.moves, move];
       const updatedBoard = boardAfterMove(state.boardMap, move, piece);
-      const updatedNotation = [...state.moveNotation, ChessService.getMoveNotation(state.boardMap, move)];
+      const updatedNotation = [...state.moveNotation, getMoveNotation(state.boardMap, move)];
 
       return {
         ...state,
@@ -46,11 +46,11 @@ const boardSlice = createSlice({
         if (!piece) {
           throw new Error('Move without a piece');
         }
-        
-        notationList.push(ChessService.getMoveNotation(board, move));
+
+        notationList.push(getMoveNotation(board, move));
         board = boardAfterMove(board, move, piece);
       }
-      
+
       return {
         ...state,
         boardMap: board,

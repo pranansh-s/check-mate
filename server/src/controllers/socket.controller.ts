@@ -64,6 +64,11 @@ const SocketController = (socket: Socket) => {
     if (!currentRoomId || !currentUserId || !chess) return;
 
     try {
+      let isPlaying = await GameService.isPlayingState(currentRoomId);
+      if(!isPlaying) {
+        throw new ServiceError("Game is not in playing state");
+      }
+      
       await chess.makeMove(currentRoomId, move);
       
       socket.emit("moveUpdate", move);

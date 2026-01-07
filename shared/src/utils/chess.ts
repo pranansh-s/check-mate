@@ -77,13 +77,13 @@ export const willMoveCheck = (board: Board, move: Move, kingColor: Color): boole
    
   const getKingPosition = (): Position | null => {
     if (movingPiece.type === 'king' && movingPiece.color === kingColor) {
-      return kingPos = move.to;
+      return move.to;
     }
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
         const piece = board[y][x];
         if (piece && piece.type === 'king' && piece.color === kingColor) {
-          return kingPos = { x, y } as Position;
+          return { x, y } as Position;
         }
       }
     }

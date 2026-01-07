@@ -5,6 +5,7 @@ import { ServiceError } from "../utils/error.js";
 import { Game, GameConfig, Move, PlayerState } from "@check-mate/shared/types";
 import { GAME_TIME_MS } from "../utils/game.js";
 import { opponentSide } from "@check-mate/shared/utils";
+import ChessService from "./chess.service.js";
 
 const GAME_PREFIX = "games";
 const roomToGameId = new Map<string, string>();
@@ -22,7 +23,17 @@ const GameService = {
     return dbController.saveData<Game>(GAME_PREFIX, game, id);
   },
 
-  addMove: async (roomId: string, move: Move) => {
+  isPlayingState: async (roomId: string): Promise<boolean> => {
+    const gameId = roomToGameId.get(roomId);
+    if (!gameId) {
+      throw new ServiceError("No game in room");
+    }
+
+    let game = await GameService.getGame(gameId);
+    return game.state === "isPlaying";
+  },
+
+  addMove: async (roomId: string, move: Move, chess: ChessService) => {
     const gameId = roomToGameId.get(roomId);
     if (!gameId) {
       throw new ServiceError("No game in room");
@@ -31,7 +42,15 @@ const GameService = {
     let game = await GameService.getGame(gameId);
     game.moves.push(move);
     game.playerTurn = opponentSide(game.playerTurn);
-    //game state updates
+    if(chess.isDraw()) {
+      // if(chess.isCheckMate()) {
+      //   game.state = game.playerTurn == "white" ? "blackWin" : "whiteWin";
+      // }
+      // else {
+        game.state = "draw";
+      // }
+    }
+
     await GameService.saveGame(game, gameId);
   },
 
