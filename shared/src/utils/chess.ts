@@ -71,26 +71,29 @@ export const getValidMovesForPiece = (board: Board, piece: Piece, player: Color)
   return validMoves.filter(to => !willMoveCheck(board, { from: piece.pos, to }, player));
 };
 
+export const getKingPosition = (board: Board, kingColor: Color): Position | null => {
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      const piece = board[y][x];
+      if (piece && piece.type === 'king' && piece.color === kingColor) {
+        return { x, y } as Position;
+      }
+    }
+  }
+  return null;
+}
+
 export const willMoveCheck = (board: Board, move: Move, kingColor: Color): boolean => {
 	const movingPiece = board[move.from.y][move.from.x];
   if (!movingPiece) return false;
-   
-  const getKingPosition = (): Position | null => {
-    if (movingPiece.type === 'king' && movingPiece.color === kingColor) {
-      return move.to;
-    }
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 8; x++) {
-        const piece = board[y][x];
-        if (piece && piece.type === 'king' && piece.color === kingColor) {
-          return { x, y } as Position;
-        }
-      }
-    }
-    return null;
-  }
 
-  let kingPos = getKingPosition();
+  let kingPos;
+  if (movingPiece.type === 'king' && movingPiece.color === kingColor) {
+    kingPos = move.to;
+  }
+  else {
+    kingPos = getKingPosition(board, kingColor);
+  }
 	if (!kingPos) return false;
 	
 	const newBoard = boardAfterMove(board, move, movingPiece);

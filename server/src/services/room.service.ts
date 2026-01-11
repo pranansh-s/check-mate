@@ -54,9 +54,7 @@ const RoomService = {
     return room;
   },
 
-  leaveRoom: async (roomId: string, userId: string): Promise<Room> => {
-    const room = await RoomService.getRoom(roomId);
-
+  leaveRoom: async (room: Room, roomId: string, userId: string): Promise<Room> => {
     if (!room.participants.includes(userId)) {
       return room;
     }
@@ -71,7 +69,7 @@ const RoomService = {
     return room;
   },
 
-  sendMessage: async (roomId: string, userId: string, content: string): Promise<ChatMessage> => {
+  sendMessage: async (room: Room, roomId: string, userId: string, content: string): Promise<Room> => {
     MessageSchema.parse(content);
     const createdMessage: ChatMessage = {
       content,
@@ -79,7 +77,6 @@ const RoomService = {
       timestamp: Date.now(),
     };
     
-    const room = await RoomService.getRoom(roomId);
     if (room.chat.length >= 100) {
       throw new ServiceError("Messages full, create a new room");
     }
@@ -90,7 +87,7 @@ const RoomService = {
     };
 
     await RoomService.saveRoom(roomId, updatedRoom);
-    return createdMessage;
+    return updatedRoom;
   }
 }
 

@@ -2,7 +2,7 @@
 //refresh page join game, first move on init game fails, getGame for room abstraction, init roomToGameId, currentRoomId, etc on server restart
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
-import { boardAfterMove, createBoardforPlayer, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
+import { boardAfterMove, createBoardforPlayer, getKingPosition, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
 import { ServiceError } from "../utils/error.js";
 import GameService from "./game.service.js";
 
@@ -40,10 +40,10 @@ class ChessService {
 		return getValidMovesForPiece(this.board, piece, this.mySide).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
 	}
 	
-	isDraw = (): boolean => {
-		let opponent = opponentSide(this.mySide);
-		const myPieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
-		for(const piece of myPieces) {
+	isStalemate = (): boolean => {
+		const opponent = opponentSide(this.mySide);
+		const pieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
+		for(const piece of pieces) {
 			const validMoves = getValidMovesForPiece(this.board, piece, opponent);
 			if(validMoves.length > 0) {
 				return false;
@@ -53,7 +53,21 @@ class ChessService {
 		return true;
 	}
 
-	makeMove = async (roomId: string, move: Move) => {
+	isCheckMate = (): boolean => {
+		const pieces = this.board.flat().filter(p => p && p.color == this.mySide) as Piece[];
+		for(const piece of pieces) {
+			const validMoves = getValidMovesForPiece(this.board, piece, this.mySide);
+			for(const moveTo of validMoves) {
+				const newBoard = boardAfterMove(this.board, { from: piece.pos, to: moveTo }, piece);
+				if(!getKingPosition(newBoard, this.mySide)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	makeMove = (move: Move) => {
 		const piece = this.board[move.from.y][move.from.x];
 		if(!piece) {
 			throw new ServiceError("Cannot move an empty piece");
@@ -64,7 +78,6 @@ class ChessService {
 		}
 
 		this.board = boardAfterMove(this.board, move, piece);
-		await GameService.addMove(roomId, move, this);
 	}
 }
 

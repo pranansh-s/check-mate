@@ -39,7 +39,7 @@ const Options = () => {
 
   return (
     <OptionsContainer>
-      <Button themeColor="green">play against computer</Button>
+      <Heading>Xhess</Heading>
       <Button onClick={handleCreateRoom} isLoading={loading} disabled={loading} themeColor="blue">
         create room
       </Button>
@@ -59,4 +59,22 @@ const OptionsContainer = tw.div`
   translate-y-1/4
   flex-col
   gap-6
+`;
+
+const Heading = tw.h1`
+  first-letter:text-black
+  hover:first-letter:text-white
+  hover:text-black
+  font-sans
+  text-white
+  [text-shadow:-2px_-2px_1px_#000,2px_-2px_1px_#000,-2px_2px_1px_#000,2px_2px_1px_#000]
+  hover:[text-shadow:-1px_-1px_1px_#fff,1px_-1px_1px_#fff,-1px_1px_1px_#fff,1px_1px_1px_#fff]
+  duration-200
+  ease-in-out
+  select-none
+  text-9xl
+  px-3
+  py-2
+  font-black
+  text-center
 `;

@@ -1,4 +1,4 @@
-import { GameType } from "@check-mate/shared/types";
+import { Game, GameType } from "@check-mate/shared/types";
 
 export const GAME_TIME_MS: Record<GameType, number> = {
   "30m": 30 * 60000,

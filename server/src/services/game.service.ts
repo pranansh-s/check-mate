@@ -23,32 +23,29 @@ const GameService = {
     return dbController.saveData<Game>(GAME_PREFIX, game, id);
   },
 
-  isPlayingState: async (roomId: string): Promise<boolean> => {
+  addMove: async (roomId: string, game: Game, move: Move, chess: ChessService) => {
     const gameId = roomToGameId.get(roomId);
     if (!gameId) {
       throw new ServiceError("No game in room");
     }
-
-    let game = await GameService.getGame(gameId);
-    return game.state === "isPlaying";
-  },
-
-  addMove: async (roomId: string, move: Move, chess: ChessService) => {
-    const gameId = roomToGameId.get(roomId);
-    if (!gameId) {
-      throw new ServiceError("No game in room");
+    
+    const isPlaying = game.state === "isPlaying";
+    if(!isPlaying) {
+      throw new ServiceError("Game is not in playing state");
     }
 
-    let game = await GameService.getGame(gameId);
+    chess.makeMove(move);
+
     game.moves.push(move);
     game.playerTurn = opponentSide(game.playerTurn);
-    if(chess.isDraw()) {
-      // if(chess.isCheckMate()) {
-      //   game.state = game.playerTurn == "white" ? "blackWin" : "whiteWin";
-      // }
-      // else {
+
+    if(chess.isStalemate()) {
+      if(chess.isCheckMate()) {
+        game.state = game.playerTurn == "white" ? "blackWin" : "whiteWin";
+      }
+      else {
         game.state = "draw";
-      // }
+      }
     }
 
     await GameService.saveGame(game, gameId);
