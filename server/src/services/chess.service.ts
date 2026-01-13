@@ -1,10 +1,9 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
-//refresh page join game, first move on init game fails, getGame for room abstraction, init roomToGameId, currentRoomId, etc on server restart
+//init roomToGameId, currentRoomId, etc on server restart, roomUpdate event, O-O O-O-O, pawn promotion, timers, stalemate other rules, en-passant
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
 import { boardAfterMove, createBoardforPlayer, getKingPosition, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
 import { ServiceError } from "../utils/error.js";
-import GameService from "./game.service.js";
 
 class ChessService {
 	private board: Board;
@@ -32,7 +31,7 @@ class ChessService {
 				throw new ServiceError("No piece in move");
 			}
 			
-			return boardAfterMove(this.board, move, piece);
+			return boardAfterMove(currentBoard, move, piece);
 		}, this.board);
 	}
 
@@ -49,7 +48,6 @@ class ChessService {
 				return false;
 			}
 		}
-
 		return true;
 	}
 

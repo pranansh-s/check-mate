@@ -9,8 +9,17 @@ import ChessService from "./chess.service.js";
 
 const GAME_PREFIX = "games";
 const roomToGameId = new Map<string, string>();
+const chessCache = new Map<string, ChessService>();
 
 const GameService = {
+  getGameId: (roomId: string): string => {
+    const gameId = roomToGameId.get(roomId);
+    if (!gameId) {
+      throw new ServiceError("No game in room");
+    }
+    return gameId;
+  },
+
   getGame: async (id: string): Promise<Game> => {
     const game = await dbController.loadData<Game>(GAME_PREFIX, id);
     if (!game) {
@@ -23,21 +32,22 @@ const GameService = {
     return dbController.saveData<Game>(GAME_PREFIX, game, id);
   },
 
-  addMove: async (roomId: string, game: Game, move: Move, chess: ChessService) => {
-    const gameId = roomToGameId.get(roomId);
-    if (!gameId) {
-      throw new ServiceError("No game in room");
-    }
-    
+  addMove: async (roomId: string, move: Move, userId: string) => {
+    const gameId = GameService.getGameId(roomId);
+    const game = await GameService.getGame(gameId);
+
     const isPlaying = game.state === "isPlaying";
     if(!isPlaying) {
       throw new ServiceError("Game is not in playing state");
     }
-
-    chess.makeMove(move);
+    
+    const chess = chessCache.get(gameId+game.playerTurn) || new ChessService(game, userId);
+    chessCache.set(gameId+game.playerTurn, chess);
 
     game.moves.push(move);
     game.playerTurn = opponentSide(game.playerTurn);
+
+    chess.makeMove(move);
 
     if(chess.isStalemate()) {
       if(chess.isCheckMate()) {
@@ -52,12 +62,9 @@ const GameService = {
   },
 
   joinGame: async (roomId: string, userId: string): Promise<Game> => {
-    const gameId = roomToGameId.get(roomId);
-    if (!gameId) {
-      throw new ServiceError("No game in room");
-    }
+    const gameId = GameService.getGameId(roomId);
+    const game = await GameService.getGame(gameId);
 
-    let game = await GameService.getGame(gameId);
     if (game.whiteSidePlayer?.userId === userId || game.blackSidePlayer?.userId === userId) {
       return game;
     }
@@ -97,7 +104,7 @@ const GameService = {
     const newGame: Game = {
       moves: [],
       playerTurn: "white",
-      state: "isWaiting",
+      state: opponentPlayerState ? "isPlaying" : "isWaiting",
 
       whiteSidePlayer: playerSide == "white" ? playerState : opponentPlayerState,
       blackSidePlayer: playerSide == "black" ? playerState : opponentPlayerState,

@@ -67,7 +67,6 @@ const boardSlice = createSlice({
       if (index < 0 || index > moveList.length) return;
 
       let board = createBoardforPlayer();
-      //side issue
       for (let i = 0; i < index; i++) {
         const move = moveList[i];
         const piece = board[move.from.y][move.from.x];

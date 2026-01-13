@@ -22,9 +22,7 @@ const SocketService = {
     });
 
     socket.on('gameJoined', (joinedGame: Game) => {
-      dispatch(initMoves(joinedGame.moves));
-      dispatch(initGameState(joinedGame));
-      dispatch(closeModal());
+      SocketService.initGame(dispatch, joinedGame);
     });
 
     socket.on('moveUpdate', (move: Move) => {
@@ -33,6 +31,12 @@ const SocketService = {
     });
 
     socket.emit('joinRoom', roomId, userId);
+  },
+
+  initGame: (dispatch: AppDispatch, game: Game) => {
+    dispatch(initMoves(game.moves));
+    dispatch(initGameState(game));
+    dispatch(closeModal());
   },
 
   sendMessage: (message: string) => {
