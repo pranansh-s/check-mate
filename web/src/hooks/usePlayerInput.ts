@@ -12,6 +12,11 @@ const usePlayerInput = () => {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      const activeElement = document.activeElement;
+      if (activeElement && activeElement.tagName === 'TEXTAREA') {
+        return;
+      }
+
       if (e.key == 'ArrowLeft') {
         dispatch(goToMove(currentMoveIndex - 1));
       } else if (e.key == 'ArrowRight') {

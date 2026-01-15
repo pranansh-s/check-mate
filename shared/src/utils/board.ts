@@ -9,31 +9,38 @@ const createPiece = (type: PieceType, color: Color, x: number, y: number): Piece
   pos: { x, y },
 });
 
-export const createBoardforPlayer = (playerSide?: Color): Board => {
+export const createBoard = (): Board => {
   const board: Board = Array(8)
     .fill(null)
     .map(() => Array(8).fill(null));
   const backRow: PieceType[] = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
 
-  let mySide = playerSide ?? 'white';
-  let otherSide = opponentSide(mySide);
   for (let i = 0; i < 8; i++) {
-    board[0][i] = createPiece(backRow[i], otherSide, i, 0);
-    board[7][i] = createPiece(backRow[i], mySide, i, 7);
+    board[0][i] = createPiece(backRow[i], 'black', i, 0);
+    board[7][i] = createPiece(backRow[i], 'white', i, 7);
   }
 
   for (let i = 0; i < 8; i++) {
-    board[1][i] = createPiece('pawn', otherSide, i, 1);
-    board[6][i] = createPiece('pawn', mySide, i, 6);
+    board[1][i] = createPiece('pawn', 'black', i, 1);
+    board[6][i] = createPiece('pawn', 'white', i, 6);
   }
 
   return board;
 };
 
-export const boardAfterMove = (board: Board, move: Move, piece: Piece): Board => {
+export const boardAfterMove = (board: Board, move: Move, piece: Piece) => {
   const { from, to } = move;
   const newBoard = board.map(row => [...row]);
-  newBoard[to.y][to.x] = { ...piece, pos: to };
+
+  const isPawnPromotion = (piece.type == "pawn" && (move.to.y == 0 || move.to.y == 7));
+
+  if(isPawnPromotion) {
+    newBoard[to.y][to.x] = createPiece('queen', piece.color, to.x, to.y);
+  }
+  else {
+    newBoard[to.y][to.x] = { ...piece, pos: to };
+  }
   newBoard[from.y][from.x] = null;
+
   return newBoard;
 };

@@ -1,4 +1,4 @@
-import { ChatMessage, Game, GameConfig, Move } from '@check-mate/shared/types';
+import { ChatMessage, Game, GameConfig, GameState, Move } from '@check-mate/shared/types';
 import { io } from 'socket.io-client';
 
 import { showErrorToast } from '@/components/common/ErrorToast';
@@ -37,6 +37,10 @@ const SocketService = {
     dispatch(initMoves(game.moves));
     dispatch(initGameState(game));
     dispatch(closeModal());
+  },
+
+  endGame: (state: GameState) => {
+    socket.emit('newGameState', state);
   },
 
   sendMessage: (message: string) => {

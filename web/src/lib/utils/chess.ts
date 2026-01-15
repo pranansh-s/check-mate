@@ -16,14 +16,12 @@ export const getMoveNotation = (board: Board, move: Move): string => {
   const pieceSymbol = { king: 'K', queen: 'Q', rook: 'R', bishop: 'B', knight: 'N', pawn: '' }[piece.type];
   const isCapture = !!board[move.to.y][move.to.x];
   const isCheck = willMoveCheck(board, move, opponentSide(piece.color));
+  const isPawnCapture = piece.type === 'pawn' && isCapture;
+  const isPawnPromotion = piece.type === 'pawn' && (move.to.y === 0 || move.to.y === 7);
 
   if (piece.type === 'king' && Math.abs(move.from.x - move.to.x) == 2) {
     return move.to.x > move.from.x ? 'O-O' : 'O-O-O';
   }
 
-  if (piece.type === 'pawn' && isCapture) {
-    return `${COLUMN_LETTERS[move.from.x]}x${column}${row}`;
-  }
-
-  return `${pieceSymbol}${isCapture ? 'x' : ''}${column}${row}${isCheck ? '+' : ''}`;
+  return `${isPawnCapture ? COLUMN_LETTERS[move.from.x] : pieceSymbol}${isCapture ? 'x' : ''}${column}${row}${isCheck ? '+' : ''}${isPawnPromotion ? 'Q' : ''}`;
 };

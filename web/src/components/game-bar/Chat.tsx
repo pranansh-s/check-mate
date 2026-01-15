@@ -6,7 +6,6 @@ import SocketService from '@/services/socket.service';
 import { MessageSchema } from '@check-mate/shared/schemas';
 import { ChatMessage } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
-import { z } from 'zod';
 
 import { handleErrors } from '@/lib/utils/error';
 import { addMessage } from '@/redux/features/chatSlice';
@@ -16,6 +15,8 @@ import { strings } from '@/constants/strings';
 
 import sendIcon from '@/../public/icons/send.svg';
 import Button from '../common/Button';
+import { ZodError } from 'zod/v4';
+import UserService from '@/services/user.service';
 
 const toTime = (val: number): string => {
   const date = new Date(val);
@@ -31,6 +32,7 @@ const toTime = (val: number): string => {
 const Chat = memo(() => {
   const endMessageRef = useRef<HTMLDivElement>(null);
   const chat = useAppSelector(state => state.chatState);
+  const userId = UserService.getUserId();
   const [message, setMessage] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
 
@@ -43,10 +45,10 @@ const Chat = memo(() => {
       setMessage('');
       SocketService.sendMessage(content);
     } catch (err) {
-      if (err instanceof z.ZodError) {
-        dispatch(addMessage(`~ ${err.errors[0].message} ~`));
+      if (err instanceof ZodError) {
+        dispatch(addMessage(`~ ${err.issues[0].message} ~`));
       } else {
-        handleErrors(err, 'could not send message');
+        handleErrors(err, 'Could not send message');
       }
     } finally {
       setIsSending(false);
@@ -71,7 +73,7 @@ const Chat = memo(() => {
           const isError = typeof chatMessage === 'string';
           return (
             <MessageField $isErrorMessage={isError} key={idx}>
-              <span>{isError ? chatMessage : chatMessage.content}</span>
+              {isError ? chatMessage : <MessageContent $isUserSent={chatMessage.senderId == userId}>{chatMessage.content}</MessageContent>}
               {!isError && <Timestamp>{toTime(chatMessage.timestamp)}</Timestamp>}
             </MessageField>
           );
@@ -120,6 +122,10 @@ const MessageHistory = tw.div`
   flex-col
   overflow-y-auto
   text-zinc-300
+`;
+
+const MessageContent = tw.span<{ $isUserSent: boolean }>`
+  ${p => (p.$isUserSent ? 'text-green-300' : 'text-white')}
 `;
 
 const InputArea = tw.div`

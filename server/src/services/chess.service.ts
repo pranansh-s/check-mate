@@ -1,26 +1,15 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
-//init roomToGameId, currentRoomId, etc on server restart, roomUpdate event, O-O O-O-O, pawn promotion, timers, stalemate other rules, en-passant
+//init roomToGameId, currentRoomId, etc on server restart, O-O O-O-O, timers, draw by mutual, stalemate, 50 move, 3-peat, en-passant, proper modals on game end
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
-import { boardAfterMove, createBoardforPlayer, getKingPosition, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
+import { boardAfterMove, createBoard, getKingPosition, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
 import { ServiceError } from "../utils/error.js";
 
 class ChessService {
 	private board: Board;
-	private mySide: Color;
 
-	constructor(newGame: Game, userId: string) {
-		if(newGame.whiteSidePlayer?.userId == userId) {
-			this.mySide = "white";
-		}
-		else if(newGame.blackSidePlayer?.userId == userId) {
-			this.mySide = "black";
-		}
-		else {
-			throw new ServiceError("Cannot start game with no player");
-		}
-
-		this.board = createBoardforPlayer();
+	constructor(newGame: Game) {
+		this.board = createBoard();
 		this.initMoves(newGame.moves);
 	}
 
@@ -36,14 +25,13 @@ class ChessService {
 	}
 
 	private isValidMove = (piece: Piece, to: Position): boolean => {
-		return getValidMovesForPiece(this.board, piece, this.mySide).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
+		return getValidMovesForPiece(this.board, piece, piece.color).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
 	}
 	
-	isStalemate = (): boolean => {
-		const opponent = opponentSide(this.mySide);
-		const pieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
+	isStalemate = (color: Color): boolean => {
+		const pieces = this.board.flat().filter(p => p && p.color == color) as Piece[];
 		for(const piece of pieces) {
-			const validMoves = getValidMovesForPiece(this.board, piece, opponent);
+			const validMoves = getValidMovesForPiece(this.board, piece, color);
 			if(validMoves.length > 0) {
 				return false;
 			}
@@ -51,13 +39,14 @@ class ChessService {
 		return true;
 	}
 
-	isCheckMate = (): boolean => {
-		const pieces = this.board.flat().filter(p => p && p.color == this.mySide) as Piece[];
+	isCheckMate = (color: Color): boolean => {
+		const opponent = opponentSide(color);
+		const pieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
 		for(const piece of pieces) {
-			const validMoves = getValidMovesForPiece(this.board, piece, this.mySide);
+			const validMoves = getValidMovesForPiece(this.board, piece, opponent);
 			for(const moveTo of validMoves) {
 				const newBoard = boardAfterMove(this.board, { from: piece.pos, to: moveTo }, piece);
-				if(!getKingPosition(newBoard, this.mySide)) {
+				if(!getKingPosition(newBoard, opponent)) {
 					return true;
 				}
 			}

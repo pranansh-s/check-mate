@@ -32,7 +32,7 @@ const GameService = {
     return dbController.saveData<Game>(GAME_PREFIX, game, id);
   },
 
-  addMove: async (roomId: string, move: Move, userId: string) => {
+  addMove: async (roomId: string, move: Move) => {
     const gameId = GameService.getGameId(roomId);
     const game = await GameService.getGame(gameId);
 
@@ -41,22 +41,22 @@ const GameService = {
       throw new ServiceError("Game is not in playing state");
     }
     
-    const chess = chessCache.get(gameId+game.playerTurn) || new ChessService(game, userId);
-    chessCache.set(gameId+game.playerTurn, chess);
-
-    game.moves.push(move);
-    game.playerTurn = opponentSide(game.playerTurn);
+    const chess = chessCache.get(gameId) || new ChessService(game);
+    chessCache.set(gameId, chess);
 
     chess.makeMove(move);
 
-    if(chess.isStalemate()) {
-      if(chess.isCheckMate()) {
+    if(chess.isStalemate(game.playerTurn)) {
+      if(chess.isCheckMate(game.playerTurn)) {
         game.state = game.playerTurn == "white" ? "blackWin" : "whiteWin";
       }
       else {
         game.state = "draw";
       }
     }
+
+    game.moves.push(move);
+    game.playerTurn = opponentSide(game.playerTurn);
 
     await GameService.saveGame(game, gameId);
   },

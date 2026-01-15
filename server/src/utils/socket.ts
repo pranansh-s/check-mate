@@ -65,7 +65,7 @@ export const socketHandlers = (socket: Socket) => {
 		newMove: async (move: Move) => {
 			if (!currentRoomId || !currentUserId) return;
 
-			await GameService.addMove(currentRoomId, move, currentUserId);
+			await GameService.addMove(currentRoomId, move);
       
       socket.emit("moveUpdate", move);
       socket.to(currentRoomId).emit("moveUpdate", move);

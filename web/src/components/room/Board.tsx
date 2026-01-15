@@ -12,13 +12,20 @@ import { useAppSelector } from '@/redux/hooks';
 
 import Cell from './Cell';
 
-const ActivePiece: React.FC<Piece> = piece => {
-  const mousePos = usePlayerInput();
+interface IActivePiece {
+  pos: {
+    x: number;
+    y: number;
+  };
+  piece: Piece;
+}
+
+const ActivePiece: React.FC<IActivePiece> = ({ pos, piece }) => {
   return (
     <ActivePieceContainer
       style={{
-        top: mousePos.y - 50,
-        left: mousePos.x - 50,
+        top: pos.y - 50,
+        left: pos.x - 50,
       }}
     >
       <Image width={100} height={100} src={piece.src} alt={`active-piece-${piece.type}-${piece.color}`} priority />
@@ -27,6 +34,7 @@ const ActivePiece: React.FC<Piece> = piece => {
 };
 
 const Board = () => {
+  const mousePos = usePlayerInput();
   const { selectedPiece, boardMap } = useAppSelector(state => state.board);
   const { playerSide } = useAppSelector(state => state.gameState);
 
@@ -46,7 +54,7 @@ const Board = () => {
           />
         ));
       })}
-      {selectedPiece && <ActivePiece {...selectedPiece} />}
+      {selectedPiece && <ActivePiece pos={mousePos} piece={selectedPiece} />}
     </BoardContainer>
   );
 };

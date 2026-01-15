@@ -1,10 +1,10 @@
 import { getMoveNotation } from '@/lib/utils/chess';
 import { Move, Piece, Position } from '@check-mate/shared/types';
-import { boardAfterMove, createBoardforPlayer } from '@check-mate/shared/utils';
+import { boardAfterMove, createBoard } from '@check-mate/shared/utils';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
-  boardMap: createBoardforPlayer(),
+  boardMap: createBoard(),
   moves: [] as Move[],
   moveNotation: [] as string[],
   currentMoveIndex: 0,
@@ -39,7 +39,7 @@ const boardSlice = createSlice({
     initMoves: (state, action: PayloadAction<Move[]>) => {
       const moveList = action.payload;
 
-      let board = createBoardforPlayer();
+      let board = createBoard();
       const notationList: string[] = [];
       for (const move of moveList) {
         const piece = board[move.from.y][move.from.x];
@@ -66,7 +66,7 @@ const boardSlice = createSlice({
       const index = action.payload;
       if (index < 0 || index > moveList.length) return;
 
-      let board = createBoardforPlayer();
+      let board = createBoard();
       for (let i = 0; i < index; i++) {
         const move = moveList[i];
         const piece = board[move.from.y][move.from.x];
