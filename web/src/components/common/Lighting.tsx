@@ -1,6 +1,4 @@
-import { memo } from 'react';
-
-const Lighting = memo(() => {
+const Lighting = () => {
   return (
     <group>
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
@@ -9,6 +7,6 @@ const Lighting = memo(() => {
       <ambientLight intensity={0.2} />
     </group>
   );
-});
+};
 
 export default Lighting;

@@ -8,8 +8,7 @@ import { Move, Piece, Position } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
 
 import { handleErrors } from '@/lib/utils/error';
-import { deSelectPiece, movePiece, selectPiece } from '@/redux/features/boardSlice';
-import { endTurn } from '@/redux/features/gameSlice';
+import { deSelectPiece, selectPiece } from '@/redux/features/boardSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 
 interface ICellProps {

@@ -1,5 +1,3 @@
-'use client';
-
 import tw from 'tailwind-styled-components';
 
 const ModalContainer = ({ children, className }: { children: React.ReactNode; className?: string }) => (

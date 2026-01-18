@@ -1,7 +1,8 @@
-import { getMoveNotation } from '@/lib/utils/chess';
 import { Move, Piece, Position } from '@check-mate/shared/types';
 import { boardAfterMove, createBoard } from '@check-mate/shared/utils';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { getMoveNotation } from '@/lib/utils/chess';
 
 const initialState = {
   boardMap: createBoard(),

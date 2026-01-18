@@ -1,20 +1,19 @@
 'use client';
 
-import { memo } from 'react';
 import { useRouter } from 'next/navigation';
 
 import tw from 'tailwind-styled-components';
 
 import { useAppSelector } from '@/redux/hooks';
 
-const ProfileBubble = memo(() => {
+const ProfileBubble = () => {
   const router = useRouter();
   const user = useAppSelector(state => state.user);
   if (!user) return;
 
   const initial = user.displayName.charAt(0);
   return <BubbleIcon onClick={() => router.push('/profile')}>{initial}</BubbleIcon>;
-});
+};
 
 export default ProfileBubble;
 

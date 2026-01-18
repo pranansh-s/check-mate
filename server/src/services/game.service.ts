@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import dbController from "../controllers/db.controller.js";
 import { ServiceError } from "../utils/error.js";
 import { Game, GameConfig, Move, PlayerState } from "@check-mate/shared/types";
-import { GAME_TIME_MS } from "../utils/game.js";
+import { checkEndGame, GAME_TIME_MS, updateTimeLeft } from "../utils/game.js";
 import { opponentSide } from "@check-mate/shared/utils";
 import ChessService from "./chess.service.js";
 
@@ -32,7 +32,7 @@ const GameService = {
     return dbController.saveData<Game>(GAME_PREFIX, game, id);
   },
 
-  addMove: async (roomId: string, move: Move) => {
+  addMove: async (roomId: string, move: Move): Promise<Game> => {
     const gameId = GameService.getGameId(roomId);
     const game = await GameService.getGame(gameId);
 
@@ -46,19 +46,15 @@ const GameService = {
 
     chess.makeMove(move);
 
-    if(chess.isStalemate(game.playerTurn)) {
-      if(chess.isCheckMate(game.playerTurn)) {
-        game.state = game.playerTurn == "white" ? "blackWin" : "whiteWin";
-      }
-      else {
-        game.state = "draw";
-      }
-    }
+    updateTimeLeft(game);
+    checkEndGame(chess, game);
 
     game.moves.push(move);
     game.playerTurn = opponentSide(game.playerTurn);
 
     await GameService.saveGame(game, gameId);
+
+    return game;
   },
 
   joinGame: async (roomId: string, userId: string): Promise<Game> => {
@@ -71,18 +67,20 @@ const GameService = {
     
     const newPlayer: PlayerState = {
       userId,
-      remainingTime: GAME_TIME_MS[game.gameType],
+      remainingTime: GAME_TIME_MS[game.gameType].baseTime,
     };
-
+    
     if (!game.whiteSidePlayer) {
       game.whiteSidePlayer = newPlayer;
     } else if (!game.blackSidePlayer) {
       game.blackSidePlayer = newPlayer;
     }
-
+    
     if (game.whiteSidePlayer && game.blackSidePlayer) {
       game.state = "isPlaying";
     }
+
+    updateTimeLeft(game);
 
     await GameService.saveGame(game, gameId);
     return game;
@@ -93,12 +91,12 @@ const GameService = {
 
     const playerState: PlayerState = {
       userId,
-      remainingTime: GAME_TIME_MS[gameType],
+      remainingTime: GAME_TIME_MS[gameType].baseTime,
     };
 
     const opponentPlayerState: PlayerState | null = opponentUserId ? {
       userId: opponentUserId,
-      remainingTime: GAME_TIME_MS[gameType],
+      remainingTime: GAME_TIME_MS[gameType].baseTime,
     } : null;
 
     const newGame: Game = {
@@ -110,6 +108,8 @@ const GameService = {
       blackSidePlayer: playerSide == "black" ? playerState : opponentPlayerState,
       gameType,
       createdAt: Date.now(),
+
+      lastPlayedAt: Date.now(),
     };
 
     const uuid = randomUUID();

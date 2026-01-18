@@ -1,0 +1,51 @@
+'use client'
+
+import React, { useEffect, useMemo, useState } from 'react';
+
+import tw from 'tailwind-styled-components';
+
+interface ITimerProps {
+  left: number;
+  ticking: boolean;
+}
+
+const convertMsToMinutes = (val: number): string => {
+  const totalSeconds = Math.floor(val / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const Timer = ({ left, ticking }: ITimerProps) => {
+  const [displayTime, setDisplayTime] = useState<number>(left);
+
+  useEffect(() => setDisplayTime(left), [left]);
+
+  useEffect(() => {
+    if (!ticking) return;
+
+    const interval = setInterval(() => {
+      setDisplayTime(prev => {
+        return Math.max(prev - 1000, 0);
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [ticking]);
+
+  return <TimerContainer $isTicking={ticking}>{convertMsToMinutes(displayTime)}</TimerContainer>;
+};
+
+export default Timer;
+
+const TimerContainer = tw.div<{ $isTicking: boolean }>`
+	${p => (p.$isTicking ? 'opacity-100' : 'opacity-50')} 
+	h-max
+  rounded-lg
+  bg-secondary
+  px-4
+  py-2
+  font-serif
+  text-2xl
+  text-tertiary
+`;

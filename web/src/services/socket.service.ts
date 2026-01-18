@@ -5,7 +5,7 @@ import { showErrorToast } from '@/components/common/ErrorToast';
 
 import { initMoves, movePiece } from '@/redux/features/boardSlice';
 import { addMessage } from '@/redux/features/chatSlice';
-import { endTurn, initGameState } from '@/redux/features/gameSlice';
+import { blackPlayerUpdate, endTurn, initGameState, whitePlayerUpdate } from '@/redux/features/gameSlice';
 import { closeModal } from '@/redux/features/modalSlice';
 import { AppDispatch } from '@/redux/store';
 
@@ -22,10 +22,17 @@ const SocketService = {
     });
 
     socket.on('gameJoined', (joinedGame: Game) => {
+      SocketService.updatePlayerState(dispatch, joinedGame);
       SocketService.initGame(dispatch, joinedGame);
     });
 
-    socket.on('moveUpdate', (move: Move) => {
+    socket.on('moveUpdate', (game: Game) => {
+      const move = game.moves.at(-1);
+      if(!move) {
+        throw new Error("No move to update");
+      }
+
+      SocketService.updatePlayerState(dispatch, game);
       dispatch(movePiece(move));
       dispatch(endTurn());
     });
@@ -37,6 +44,15 @@ const SocketService = {
     dispatch(initMoves(game.moves));
     dispatch(initGameState(game));
     dispatch(closeModal());
+  },
+
+  updatePlayerState: (dispatch: AppDispatch, game: Game) => {
+     if(game.whiteSidePlayer) {
+      dispatch(whitePlayerUpdate(game.whiteSidePlayer));
+    }
+    if(game.blackSidePlayer) {
+      dispatch(blackPlayerUpdate(game.blackSidePlayer));
+    }
   },
 
   endGame: (state: GameState) => {

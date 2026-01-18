@@ -1,14 +1,10 @@
-'use client';
-
-import { memo } from 'react';
-
 import tw from 'tailwind-styled-components';
 
-import Chat from './Chat';
+import Chat from './chat';
 import GameOptions from './GameOptions';
 import MoveHistory from './MoveHistory';
 
-const GameBar = memo(() => {
+const GameBar = () => {
   return (
     <GameBarContainer>
       <GameOptions />
@@ -17,7 +13,7 @@ const GameBar = memo(() => {
       <Chat />
     </GameBarContainer>
   );
-});
+};
 
 export default GameBar;
 

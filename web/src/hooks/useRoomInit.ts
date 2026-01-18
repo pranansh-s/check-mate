@@ -13,7 +13,7 @@ const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Gam
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !currentRoomId) return;
 
     SocketService.initSocket(currentRoomId, userId, dispatch);
     dispatch(initMessages(currentRoom.chat));

@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useMemo, useRef } from 'react';
 
 import { modelPaths } from '@/constants';

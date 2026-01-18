@@ -62,19 +62,19 @@ const OptionsContainer = tw.div`
 `;
 
 const Heading = tw.h1`
-  first-letter:text-black
-  hover:first-letter:text-white
-  hover:text-black
-  font-sans
-  text-white
-  [text-shadow:-2px_-2px_1px_#000,2px_-2px_1px_#000,-2px_2px_1px_#000,2px_2px_1px_#000]
-  hover:[text-shadow:-1px_-1px_1px_#fff,1px_-1px_1px_#fff,-1px_1px_1px_#fff,1px_1px_1px_#fff]
-  duration-200
-  ease-in-out
   select-none
-  text-9xl
   px-3
   py-2
-  font-black
   text-center
+  font-sans
+  text-9xl
+  font-black
+  text-white
+  duration-200
+  ease-in-out
+  [text-shadow:-2px_-2px_1px_#000,2px_-2px_1px_#000,-2px_2px_1px_#000,2px_2px_1px_#000]
+  first-letter:text-black
+  hover:text-black
+  hover:[text-shadow:-1px_-1px_1px_#fff,1px_-1px_1px_#fff,-1px_1px_1px_#fff,1px_1px_1px_#fff]
+  hover:first-letter:text-white
 `;

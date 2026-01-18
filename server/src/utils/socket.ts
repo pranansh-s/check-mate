@@ -65,10 +65,10 @@ export const socketHandlers = (socket: Socket) => {
 		newMove: async (move: Move) => {
 			if (!currentRoomId || !currentUserId) return;
 
-			await GameService.addMove(currentRoomId, move);
+			const game = await GameService.addMove(currentRoomId, move);
       
-      socket.emit("moveUpdate", move);
-      socket.to(currentRoomId).emit("moveUpdate", move);
+      socket.emit("moveUpdate", game);
+      socket.to(currentRoomId).emit("moveUpdate", game);
 		},
 
 		disconnect: async () => {

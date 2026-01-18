@@ -9,10 +9,14 @@ const MoveHistory = () => {
   const moveList = useAppSelector(state => state.board.moveNotation);
   const dispatch = useAppDispatch();
 
+  const handleGoToMove = (index: number) => {
+    dispatch(goToMove(index + 1));
+  };
+
   return (
     <MoveHistoryContainer className="striped">
       {moveList.map((move, idx) => (
-        <MoveItem onClick={() => dispatch(goToMove(idx + 1))} key={idx}>
+        <MoveItem onClick={() => handleGoToMove(idx)} key={idx}>
           <span>{idx + 1}.</span>
           <span>{move}</span>
         </MoveItem>

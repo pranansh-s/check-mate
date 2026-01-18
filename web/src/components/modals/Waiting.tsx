@@ -1,12 +1,10 @@
 'use client';
 
-import { memo } from 'react';
-
 import tw from 'tailwind-styled-components';
 
 import ModalContainer from './Modal';
 
-const Waiting = memo(() => {
+const Waiting = () => {
   return (
     <StyledModalContainer>
       <WaitingText>waiting for room owner to start game</WaitingText>
@@ -17,7 +15,7 @@ const Waiting = memo(() => {
       </LoaderContainer>
     </StyledModalContainer>
   );
-});
+};
 
 export default Waiting;
 

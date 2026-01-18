@@ -1,5 +1,3 @@
-'use client';
-
 import tw from 'tailwind-styled-components';
 
 import surrender from '@/../public/icons/flag.svg';

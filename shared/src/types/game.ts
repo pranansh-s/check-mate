@@ -22,6 +22,8 @@ export interface Game {
   blackSidePlayer: PlayerState | null;
   gameType: GameType;
   createdAt: number;
+
+  lastPlayedAt: number;
 }
 
 export interface PlayerState {
