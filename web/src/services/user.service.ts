@@ -1,38 +1,55 @@
-import { Profile } from '@check-mate/shared/types';
-import { signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { signOut, User } from 'firebase/auth';
 
-import { auth, db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
 import { onLogin, onLogout } from '@/redux/features/userSlice';
 import { store } from '@/redux/store';
 
 import { strings } from '@/constants/strings';
+import { post_create_profile, get_profile } from '@/lib/api';
+import { Profile } from '@check-mate/shared/schemas';
 
 const UserService = {
-  refreshProfile: async (uid: string) => {
-    const cachedProfile = sessionStorage.getItem('profile');
+  createProfile: async (displayName: string, email: string): Promise<Profile> => {
+    const newProfile: Profile = {
+      displayName,
+      email,
+      createdAt: Date.now()
+    };
 
+    try {
+      const response = await post_create_profile(newProfile);
+      const profile = response.data;
+      store.dispatch(onLogin(profile));
+      sessionStorage.setItem('profile', JSON.stringify(profile));
+      return profile;
+    } catch (err) {
+      console.error("Failed to create profile: ", err);
+      throw err;
+    }
+  },
+
+  refreshProfile: async () => {
+    const cachedProfile = sessionStorage.getItem('profile');
     if (cachedProfile && cachedProfile !== 'undefined') {
       try {
         const parsedProfile = JSON.parse(cachedProfile) as Profile;
         store.dispatch(onLogin(parsedProfile));
+        return parsedProfile;
       } catch (err) {
-        console.log('failed to parse profile');
+        console.log('Failed to parse cached profile');
       }
-      return;
     }
 
     try {
-      const snapshot = await getDoc(doc(db, 'profiles', uid));
-      if (snapshot.exists()) {
-        const userData = snapshot.data();
-        store.dispatch(onLogin(userData as Profile));
-        sessionStorage.setItem('profile', JSON.stringify(userData));
-      } else store.dispatch(onLogout());
+      const res = await get_profile();
+      const profile = res.data;
+      store.dispatch(onLogin(profile));
+      sessionStorage.setItem('profile', JSON.stringify(profile));
     } catch (err) {
       handleErrors(err, strings.auth.errors.loginFail);
-      await UserService.logOut();
+      store.dispatch(onLogout());
+      console.log('Failed to parse cached profile');
     }
   },
 
@@ -43,6 +60,7 @@ const UserService = {
       }
 
       await signOut(auth);
+      sessionStorage.removeItem('profile');
       store.dispatch(onLogout());
 
       window.location.href = '/';

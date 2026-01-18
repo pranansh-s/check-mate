@@ -4,14 +4,15 @@ import tw from 'tailwind-styled-components';
 
 import { goToMove } from '@/redux/features/boardSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useCallback } from 'react';
 
 const MoveHistory = () => {
   const moveList = useAppSelector(state => state.board.moveNotation);
   const dispatch = useAppDispatch();
 
-  const handleGoToMove = (index: number) => {
+  const handleGoToMove = useCallback((index: number) => {
     dispatch(goToMove(index + 1));
-  };
+  }, []);
 
   return (
     <MoveHistoryContainer className="striped">

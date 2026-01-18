@@ -11,14 +11,14 @@ import Input from '@/components/common/Input';
 import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
-import { createProfile } from '@/lib/utils/user';
-import { UserRegisterSchema } from '@/schema/UserSchema';
 
 import { strings } from '@/constants/strings';
 
 import mailIcon from '@/../public/icons/mail.svg';
 import passwordIcon from '@/../public/icons/password.svg';
 import userIcon from '@/../public/icons/user.svg';
+import { UserRegisterSchema } from '@check-mate/shared/schemas';
+import UserService from '@/services/user.service';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -37,8 +37,8 @@ export default function RegisterPage() {
         confirmPassword: formState.confirmPassword?.value ?? '',
       });
 
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await createProfile(displayName, email, user.uid);
+      await createUserWithEmailAndPassword(auth, email, password);
+      await UserService.createProfile(displayName, email);
 
       router.push('/');
     } catch (err) {
@@ -54,7 +54,7 @@ export default function RegisterPage() {
         name="displayName"
         type="text"
         placeholder={strings.auth.displayNamePlaceholder}
-        onChange={handleInputChange(UserRegisterSchema._def.schema.shape.displayName)}
+        onChange={handleInputChange(UserRegisterSchema.shape.displayName)}
         input={formState.displayName}
         iconNode={userIcon}
       />
@@ -62,7 +62,7 @@ export default function RegisterPage() {
         name="email"
         type="email"
         placeholder={strings.auth.emailPlaceholder}
-        onChange={handleInputChange(UserRegisterSchema._def.schema.shape.email)}
+        onChange={handleInputChange(UserRegisterSchema.shape.email)}
         input={formState.email}
         iconNode={mailIcon}
       />
@@ -70,7 +70,7 @@ export default function RegisterPage() {
         name="password"
         type="password"
         placeholder={strings.auth.passwordPlaceholder}
-        onChange={handleInputChange(UserRegisterSchema._def.schema.shape.password)}
+        onChange={handleInputChange(UserRegisterSchema.shape.password)}
         input={formState.password}
         iconNode={passwordIcon}
       />
@@ -78,7 +78,7 @@ export default function RegisterPage() {
         name="confirmPassword"
         type="password"
         placeholder={strings.auth.confirmPasswordPlaceholder}
-        onChange={handleInputChange(UserRegisterSchema._def.schema.shape.confirmPassword)}
+        onChange={handleInputChange(UserRegisterSchema.shape.confirmPassword)}
         input={formState.confirmPassword}
         iconNode={passwordIcon}
       />

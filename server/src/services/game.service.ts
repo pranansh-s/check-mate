@@ -47,6 +47,8 @@ const GameService = {
     chess.makeMove(move);
 
     updateTimeLeft(game);
+    game.lastPlayedAt = Date.now();
+    
     checkEndGame(chess, game);
 
     game.moves.push(move);

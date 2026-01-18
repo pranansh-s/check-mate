@@ -37,6 +37,4 @@ export const updateTimeLeft = (game: Game) => {
       game.blackSidePlayer.remainingTime = Math.max(game.blackSidePlayer.remainingTime - timeElapsed + timeToAdd, 0);
     }
   }
-
-  game.lastPlayedAt = now;
 }

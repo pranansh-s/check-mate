@@ -1,5 +1,5 @@
 import dbController from "../controllers/db.controller.js";
-import { Profile } from "@check-mate/shared/types";
+import { Profile } from "@check-mate/shared/schemas";
 import { ServiceError } from "../utils/error.js";
 
 const PROFILE_PREFIX = "profiles";

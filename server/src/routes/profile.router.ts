@@ -1,10 +1,11 @@
 import express from "express";
 import ProfileService from "../services/profile.service.js";
 import { handleAuthValidation } from "../middleware.js";
+import { ProfileSchema } from "@check-mate/shared/schemas";
 
 const router = express.Router();
 
-router.get('/profile', handleAuthValidation, async (req, res, next) => {
+router.get('/profile', async (req, res, next) => {
 	try {
 		const userId = req.userId;
 		const profile = await ProfileService.getProfile(userId);
@@ -19,11 +20,11 @@ router.get('/profile', handleAuthValidation, async (req, res, next) => {
 router.post('/new-profile', handleAuthValidation, async (req, res, next) => {
 	try {
 		const userId = req.userId;
-		const newProfile = req.body;
-		//reqs validation
-		await ProfileService.saveProfile(newProfile, userId);
+		const newProfile = ProfileSchema.parse(req.body);
+		
+		await ProfileService.saveProfile({ ...newProfile, createdAt: Date.now() }, userId);
 
-		res.status(201);
+		res.status(201).json(newProfile);
 	}
 	catch (err) {
 		next(err);

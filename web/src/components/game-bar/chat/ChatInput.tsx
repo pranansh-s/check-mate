@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import SocketService from '@/services/socket.service';
 import { MessageSchema } from '@check-mate/shared/schemas';
@@ -23,7 +23,7 @@ const ChatInput = () => {
 
   const dispatch = useAppDispatch();
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (!message.trim()) return;
     setIsSending(true);
     try {
@@ -39,14 +39,14 @@ const ChatInput = () => {
     } finally {
       setIsSending(false);
     }
-  };
+  }, [message]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isSending) {
       e.preventDefault();
       handleSendMessage();
     }
-  };
+  }, [isSending, handleSendMessage]);
 
   return (
     <InputArea>

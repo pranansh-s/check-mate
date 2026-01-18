@@ -12,11 +12,12 @@ interface IUserBarProps {
 
 const UserBar = ({ user, isUser }: IUserBarProps) => {
 	const { isTurn, isPlaying } = useAppSelector(state => state.gameState);
+  const shouldTick = isPlaying && isTurn == isUser;
 
   return (
     <UserBarContainer>
       <ProfileTag />
-      <Timer left={user?.remainingTime ?? 1800000} ticking={isPlaying && isTurn == isUser} />
+      <Timer left={user?.remainingTime ?? 1800000} ticking={shouldTick} />
     </UserBarContainer>
   );
 };

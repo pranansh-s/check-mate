@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useDispatch } from 'react-redux';
@@ -19,7 +19,7 @@ const Options = () => {
 
   const dispatch = useDispatch();
 
-  const handleCreateRoom = async () => {
+  const handleCreateRoom = useCallback(async () => {
     if (!auth.currentUser) {
       router.push('/login');
       return;
@@ -35,7 +35,7 @@ const Options = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return (
     <OptionsContainer>

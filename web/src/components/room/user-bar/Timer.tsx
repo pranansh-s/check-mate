@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -9,15 +9,15 @@ interface ITimerProps {
   ticking: boolean;
 }
 
-const convertMsToMinutes = (val: number): string => {
-  const totalSeconds = Math.floor(val / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
-
 const Timer = ({ left, ticking }: ITimerProps) => {
   const [displayTime, setDisplayTime] = useState<number>(left);
+  
+  const formatTime = useCallback((val: number) => {
+    const totalSeconds = Math.floor(val / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }, []);
 
   useEffect(() => setDisplayTime(left), [left]);
 
@@ -33,7 +33,9 @@ const Timer = ({ left, ticking }: ITimerProps) => {
     return () => clearInterval(interval);
   }, [ticking]);
 
-  return <TimerContainer $isTicking={ticking}>{convertMsToMinutes(displayTime)}</TimerContainer>;
+
+
+  return <TimerContainer $isTicking={ticking}>{formatTime(displayTime)}</TimerContainer>;
 };
 
 export default Timer;

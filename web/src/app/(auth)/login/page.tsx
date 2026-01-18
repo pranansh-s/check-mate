@@ -17,6 +17,7 @@ import { strings } from '@/constants/strings';
 
 import mailIcon from '@/../public/icons/mail.svg';
 import passwordIcon from '@/../public/icons/password.svg';
+import UserService from '@/services/user.service';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function LoginPage() {
       });
 
       await signInWithEmailAndPassword(auth, email, password);
+      
       router.push('/');
     } catch (err) {
       handleErrors(err, strings.auth.errors.loginFail, setFormState);

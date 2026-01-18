@@ -10,8 +10,7 @@ import { useAppSelector } from '@/redux/hooks';
 import GameBar from '../game-bar';
 import GameSettings from '../modals/GameSettings';
 import Waiting from '../modals/Waiting';
-import Board from './Board';
-import UserBar from './user-bar';
+import GameUI from './GameUI';
 
 interface IRoomProps {
   roomId: string;
@@ -21,7 +20,6 @@ interface IRoomProps {
 
 const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
   const activeModal = useAppSelector(state => state.modals);
-  const { playerSide, players } = useAppSelector(state => state.gameState);
   const userId = UserService.getUserId();
 
   useRoomInit(roomId, room, game, userId);
@@ -30,11 +28,7 @@ const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game }) => {
     <RoomContainer>
       {activeModal === 'gameSettings' && <GameSettings />}
       {activeModal === 'waiting' && <Waiting />}
-      <GameContainer>
-        <UserBar user={playerSide == 'white' ? players.blackSidePlayer : players.whiteSidePlayer} isUser={false} />
-        <Board />
-        <UserBar user={playerSide == 'white' ? players.whiteSidePlayer : players.blackSidePlayer} isUser={true} />
-      </GameContainer>
+      <GameUI />
       <GameBar />
     </RoomContainer>
   );
@@ -49,12 +43,4 @@ const RoomContainer = tw.div`
   justify-center
   gap-10
   p-20
-`;
-
-const GameContainer = tw.div`
-  flex
-  h-full
-  flex-col
-  justify-center
-  space-y-3
 `;
