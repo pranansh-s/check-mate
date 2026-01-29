@@ -17,6 +17,7 @@ client.interceptors.response.use(
   }
 );
 
+
 client.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = await getAccessToken();

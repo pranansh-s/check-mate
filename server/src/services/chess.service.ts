@@ -1,5 +1,5 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
-//init roomToGameId, currentRoomId, etc on server restart, O-O O-O-O, timers, draw by mutual, stalemate, 50 move, 3-peat, en-passant, proper modals on game end
+//init roomToGameId, currentRoomId, etc on server restart, timer bug, login bug, O-O O-O-O, draw by mutual, stalemate, 50 move, 3-peat, en-passant, proper modals on game end
 
 import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
 import { boardAfterMove, createBoard, getKingPosition, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";

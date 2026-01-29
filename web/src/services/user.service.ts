@@ -1,4 +1,4 @@
-import { signOut, User } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 
 import { auth } from '@/lib/firebase';
 import { handleErrors } from '@/lib/utils/error';
@@ -14,7 +14,8 @@ const UserService = {
     const newProfile: Profile = {
       displayName,
       email,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      photo: null,
     };
 
     try {

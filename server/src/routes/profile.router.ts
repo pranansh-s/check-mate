@@ -5,7 +5,7 @@ import { ProfileSchema } from "@check-mate/shared/schemas";
 
 const router = express.Router();
 
-router.get('/profile', async (req, res, next) => {
+router.get('/profile', handleAuthValidation, async (req, res, next) => {
 	try {
 		const userId = req.userId;
 		const profile = await ProfileService.getProfile(userId);

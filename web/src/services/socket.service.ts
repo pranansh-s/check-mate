@@ -5,9 +5,10 @@ import { showErrorToast } from '@/components/common/ErrorToast';
 
 import { initMoves, movePiece } from '@/redux/features/boardSlice';
 import { addMessage } from '@/redux/features/chatSlice';
-import { blackPlayerUpdate, endTurn, initGameState, whitePlayerUpdate } from '@/redux/features/gameSlice';
+import { blackPlayerUpdate, endTurn, initGameState, setOpponentProfile, whitePlayerUpdate } from '@/redux/features/gameSlice';
 import { closeModal } from '@/redux/features/modalSlice';
 import { AppDispatch } from '@/redux/store';
+import { Profile } from '@check-mate/shared/schemas';
 
 const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
 
@@ -21,9 +22,8 @@ const SocketService = {
       dispatch(addMessage(newChatMessage));
     });
 
-    socket.on('gameJoined', (joinedGame: Game) => {
-      SocketService.updatePlayerState(dispatch, joinedGame);
-      SocketService.initGame(dispatch, joinedGame);
+    socket.on('gameJoined', (joinedGame: Game, opponentProfile: Profile | null) => {
+      SocketService.initGame(dispatch, joinedGame, opponentProfile);
     });
 
     socket.on('moveUpdate', (game: Game) => {
@@ -40,14 +40,19 @@ const SocketService = {
     socket.emit('joinRoom', roomId, userId);
   },
 
-  initGame: (dispatch: AppDispatch, game: Game) => {
+  initGame: (dispatch: AppDispatch, game: Game, profile: Profile | null) => {
+    
+    SocketService.updatePlayerState(dispatch, game);
     dispatch(initMoves(game.moves));
     dispatch(initGameState(game));
+    if(profile) {
+      dispatch(setOpponentProfile(profile));
+    }
     dispatch(closeModal());
   },
 
   updatePlayerState: (dispatch: AppDispatch, game: Game) => {
-     if(game.whiteSidePlayer) {
+    if(game.whiteSidePlayer) {
       dispatch(whitePlayerUpdate(game.whiteSidePlayer));
     }
     if(game.blackSidePlayer) {

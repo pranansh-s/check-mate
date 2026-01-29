@@ -1,4 +1,5 @@
 import UserService from '@/services/user.service';
+import { Profile } from '@check-mate/shared/schemas';
 import { Color, Game, GameType, PlayerState } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -10,7 +11,8 @@ const initialState = {
   players: {
     whiteSidePlayer: null as PlayerState | null,
     blackSidePlayer: null as PlayerState | null,
-  }
+  },
+  opponentProfile: null as Profile | null
 };
 
 const gameSlice = createSlice({
@@ -18,7 +20,7 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     initGameState: (_, action: PayloadAction<Game>) => {
-      const { playerTurn, whiteSidePlayer, blackSidePlayer, gameType } = action.payload;
+      const { playerTurn, state, whiteSidePlayer, blackSidePlayer, gameType } = action.payload;
       const userId = UserService.getUserId();
       if (!userId) return;
 
@@ -33,11 +35,12 @@ const gameSlice = createSlice({
         isTurn: playerSide == playerTurn,
         playerSide,
         gameType,
-        isPlaying: true,
+        isPlaying: state == "isPlaying",
         players: {
           whiteSidePlayer,
           blackSidePlayer
-        }
+        },
+        opponentProfile: null
       };
     },
 
@@ -49,12 +52,16 @@ const gameSlice = createSlice({
       state.players.blackSidePlayer = action.payload;
     },
 
+    setOpponentProfile: (state, action: PayloadAction<Profile>) => {
+      state.opponentProfile = action.payload
+    },
+
     endTurn: state => {
       state.isTurn = !state.isTurn;
     },
   },
 });
 
-export const { initGameState, whitePlayerUpdate, blackPlayerUpdate, endTurn } = gameSlice.actions;
+export const { initGameState, whitePlayerUpdate, setOpponentProfile, blackPlayerUpdate, endTurn } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -4,6 +4,7 @@ import { Socket } from "socket.io";
 import GameService from "../services/game.service.js";
 import RoomService from "../services/room.service.js";
 import { GameConfig, Move } from "@check-mate/shared/types";
+import ProfileService from "../services/profile.service.js";
 
 export const handleErrors = (handler: (...args: any[]) => Promise<void>, socket: Socket, title: string) => {
 	return async (...args: any[]) => {
@@ -55,11 +56,14 @@ export const socketHandlers = (socket: Socket) => {
 		newGame: async (config: GameConfig) => {	
 			if (!currentRoomId || !currentUserId) return;
 
-			const otherUserId = (await RoomService.getRoom(currentRoomId)).participants.find((id) => id !== currentUserId);
-			const newGame = await GameService.createGame(config, currentRoomId, currentUserId, otherUserId);
+			const opponentUserId = (await RoomService.getRoom(currentRoomId)).participants.find((id) => id !== currentUserId);
+			const newGame = await GameService.createGame(config, currentRoomId, currentUserId, opponentUserId);
 
-			socket.emit("gameJoined", newGame);
-			socket.to(currentRoomId).emit("gameJoined", newGame);
+			const myProfile = await ProfileService.getProfile(currentUserId);
+			const opponentProfile = opponentUserId ? await ProfileService.getProfile(opponentUserId) : null;
+
+			socket.emit("gameJoined", newGame, opponentProfile);
+			socket.to(currentRoomId).emit("gameJoined", newGame, myProfile);
 		},
 
 		newMove: async (move: Move) => {

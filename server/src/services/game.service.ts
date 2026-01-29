@@ -46,9 +46,7 @@ const GameService = {
 
     chess.makeMove(move);
 
-    updateTimeLeft(game);
-    game.lastPlayedAt = Date.now();
-    
+    updateTimeLeft(game, true);
     checkEndGame(chess, game);
 
     game.moves.push(move);
@@ -66,7 +64,7 @@ const GameService = {
     if (game.whiteSidePlayer?.userId === userId || game.blackSidePlayer?.userId === userId) {
       return game;
     }
-    
+
     const newPlayer: PlayerState = {
       userId,
       remainingTime: GAME_TIME_MS[game.gameType].baseTime,
@@ -82,8 +80,8 @@ const GameService = {
       game.state = "isPlaying";
     }
 
-    updateTimeLeft(game);
-
+    updateTimeLeft(game, false);
+    
     await GameService.saveGame(game, gameId);
     return game;
   },

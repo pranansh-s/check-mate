@@ -2,15 +2,21 @@ import tw from "tailwind-styled-components";
 import Board from "./Board";
 import UserBar from "./user-bar";
 import { useAppSelector } from "@/redux/hooks";
+import { useMemo } from "react";
 
 const GameUI = () => {
 	const { playerSide, players } = useAppSelector(state => state.gameState);
+	const myPlayer = useMemo(() => playerSide == 'white' ? players.whiteSidePlayer : players.blackSidePlayer, [playerSide]);
+	const opponentPlayer = useMemo(() => playerSide == 'white' ? players.blackSidePlayer : players.whiteSidePlayer, [playerSide]);
+
+	const myProfile = useAppSelector(state => state.user);
+	const opponentProfile = useAppSelector(state => state.gameState.opponentProfile);
 
 	return (
 		<GameContainer>
-			<UserBar user={playerSide == 'white' ? players.blackSidePlayer : players.whiteSidePlayer} isUser={false} />
+			<UserBar timer={opponentPlayer?.remainingTime} profile={opponentProfile} isUser={false} />
 			<Board />
-			<UserBar user={playerSide == 'white' ? players.whiteSidePlayer : players.blackSidePlayer} isUser={true} />
+			<UserBar timer={myPlayer?.remainingTime} profile={myProfile} isUser={true} />
 		</GameContainer>
 	)
 }

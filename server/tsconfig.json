@@ -5,6 +5,7 @@
     "strict": true,
     "noEmitOnError": true,
     "module": "nodenext", 
+    "rootDir": "./src",
     "outDir": "./dist",
     "moduleResolution": "nodenext",
     "sourceMap": true,

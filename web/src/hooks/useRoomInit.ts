@@ -3,13 +3,14 @@ import { useEffect } from 'react';
 import SocketService from '@/services/socket.service';
 import { Game, Room } from '@check-mate/shared/types';
 
-import { initMoves } from '@/redux/features/boardSlice';
 import { initMessages } from '@/redux/features/chatSlice';
-import { initGameState } from '@/redux/features/gameSlice';
 import { openModal } from '@/redux/features/modalSlice';
 import { useAppDispatch } from '@/redux/hooks';
+import UserService from '@/services/user.service';
+import { Profile } from '@check-mate/shared/schemas';
 
-const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Game | null, userId?: string) => {
+const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Game | null, opponentProfile: Profile | null) => {
+  const userId = UserService.getUserId();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -18,9 +19,10 @@ const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Gam
     SocketService.initSocket(currentRoomId, userId, dispatch);
     dispatch(initMessages(currentRoom.chat));
 
+    console.log(currentRoom, existingGame);
+
     if (existingGame) {
-      dispatch(initMoves(existingGame.moves));
-      dispatch(initGameState(existingGame));
+      SocketService.initGame(dispatch, existingGame, opponentProfile);
       return;
     }
 

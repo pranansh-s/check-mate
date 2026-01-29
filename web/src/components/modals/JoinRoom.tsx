@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { RoomKeySchema } from '@check-mate/shared/schemas';
@@ -20,25 +20,24 @@ const JoinRoom = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const formattedValue =
       e.target.value.length > formState.roomKey?.value?.length ? formatRoomKey(e.target.value) : e.target.value;
     setFormState({
       roomKey: { value: formattedValue, error: undefined },
     });
-  };
+  }, [setFormState]);
 
-  const handleRoomJoin = () => {
+  const handleRoomJoin = useCallback(() => {
     setLoading(true);
     try {
       const id = RoomKeySchema.parse(formState.roomKey?.value);
-
       router.push(`/room/${id}`);
     } catch (err) {
       handleErrors(err, strings.room.errors.roomJoinFail, setFormState);
       setLoading(false);
     }
-  };
+  }, [formState.roomKey, setFormState]);
 
   return (
     <ModalContainer>

@@ -23,18 +23,20 @@ export const checkEndGame = (chess: ChessService, game: Game) => {
   }
 }
 
-export const updateTimeLeft = (game: Game) => {
+export const updateTimeLeft = (game: Game, isMove: boolean) => {
   const now = Date.now();
   const timeElapsed = now - game.lastPlayedAt;
   const timeToAdd = GAME_TIME_MS[game.gameType].inc;
 
   if (game.playerTurn === "white") {
     if (game.whiteSidePlayer) {
-      game.whiteSidePlayer.remainingTime = Math.max(game.whiteSidePlayer.remainingTime - timeElapsed + timeToAdd, 0);
+      game.whiteSidePlayer.remainingTime = Math.max(game.whiteSidePlayer.remainingTime - timeElapsed + (isMove ? timeToAdd : 0), 0);
     }
   } else {
     if (game.blackSidePlayer) {
-      game.blackSidePlayer.remainingTime = Math.max(game.blackSidePlayer.remainingTime - timeElapsed + timeToAdd, 0);
+      game.blackSidePlayer.remainingTime = Math.max(game.blackSidePlayer.remainingTime - timeElapsed + (isMove ? timeToAdd : 0), 0);
     }
   }
+
+  game.lastPlayedAt = Date.now();
 }
