@@ -1,16 +1,24 @@
 {
-  "name": "check-mate",
+  "name": "xhess",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "web-dev": "npm -C ./web run dev",
     "server-dev": "npm -C ./server run dev",
     "build": " npm -C ./web run build && npm -C ./shared run build && npm -C ./server run build",
-    "lint": " npm -C ./web run lint && npm -C ./server run lint"
+    "lint": " npm -C ./web run lint && npm -C ./server run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "workspaces": [
     "web",
     "server",
     "shared/"
-  ]
+  ],
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwind-styled-components": "^2.0.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
+  }
 }

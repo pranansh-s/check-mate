@@ -1,13 +1,14 @@
 .next/
 out/
 build/
-
+dist/
 
 node_modules/
-
 
 public/
 
 .env
 .env.*
 .DS_Store
+
+dump.rdb

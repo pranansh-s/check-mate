@@ -3,8 +3,9 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
 
-import { Piece } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
+
+import { Piece } from '@xhess/shared/types';
 
 import usePlayerInput from '@/hooks/usePlayerInput';
 import useValidMoves from '@/hooks/useValidMoves';

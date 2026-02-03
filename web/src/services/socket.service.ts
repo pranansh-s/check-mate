@@ -1,14 +1,21 @@
-import { ChatMessage, Game, GameConfig, GameState, Move } from '@check-mate/shared/types';
 import { io } from 'socket.io-client';
+
+import { Profile } from '@xhess/shared/schemas';
+import { ChatMessage, Game, GameConfig, GameState, Move } from '@xhess/shared/types';
 
 import { showErrorToast } from '@/components/common/ErrorToast';
 
 import { initMoves, movePiece } from '@/redux/features/boardSlice';
 import { addMessage } from '@/redux/features/chatSlice';
-import { blackPlayerUpdate, endTurn, initGameState, setOpponentProfile, whitePlayerUpdate } from '@/redux/features/gameSlice';
+import {
+  blackPlayerUpdate,
+  endTurn,
+  initGameState,
+  setOpponentProfile,
+  whitePlayerUpdate,
+} from '@/redux/features/gameSlice';
 import { closeModal } from '@/redux/features/modalSlice';
 import { AppDispatch } from '@/redux/store';
-import { Profile } from '@check-mate/shared/schemas';
 
 const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
 
@@ -28,8 +35,8 @@ const SocketService = {
 
     socket.on('moveUpdate', (game: Game) => {
       const move = game.moves.at(-1);
-      if(!move) {
-        throw new Error("No move to update");
+      if (!move) {
+        throw new Error('No move to update');
       }
 
       SocketService.updatePlayerState(dispatch, game);
@@ -49,10 +56,10 @@ const SocketService = {
   },
 
   updatePlayerState: (dispatch: AppDispatch, game: Game) => {
-    if(game.whiteSidePlayer) {
+    if (game.whiteSidePlayer) {
       dispatch(whitePlayerUpdate(game.whiteSidePlayer));
     }
-    if(game.blackSidePlayer) {
+    if (game.blackSidePlayer) {
       dispatch(blackPlayerUpdate(game.blackSidePlayer));
     }
   },

@@ -1,71 +1,74 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
 //init roomToGameId, currentRoomId, etc on server restart, login bug, O-O O-O-O, draw by mutual, stalemate, 50 move, 3-peat, en-passant, proper modals on game end
 
-import { Board, Color, Game, Move, Piece, Position } from "@check-mate/shared/types";
-import { boardAfterMove, createBoard, getKingPosition, getValidMovesForPiece, opponentSide } from "@check-mate/shared/utils";
-import { ServiceError } from "../utils/error.js";
+import { Board, Color, Game, Move, Piece, Position } from '@xhess/shared/types';
+import { boardAfterMove, createBoard, getKingPosition, getValidMovesForPiece, opponentSide } from '@xhess/shared/utils';
+
+import { ServiceError } from '../utils/error.js';
 
 class ChessService {
-	private board: Board;
+  private board: Board;
 
-	constructor(newGame: Game) {
-		this.board = createBoard();
-		this.initMoves(newGame.moves);
-	}
+  constructor(newGame: Game) {
+    this.board = createBoard();
+    this.initMoves(newGame.moves);
+  }
 
-	private initMoves = (moves: Move[]) => {
-		this.board = moves.reduce((currentBoard, move) => {
-			const piece = currentBoard[move.from.y][move.from.x];
-			if(!piece) {
-				throw new ServiceError("No piece in move");
-			}
-			
-			return boardAfterMove(currentBoard, move, piece);
-		}, this.board);
-	}
+  private initMoves = (moves: Move[]) => {
+    this.board = moves.reduce((currentBoard, move) => {
+      const piece = currentBoard[move.from.y][move.from.x];
+      if (!piece) {
+        throw new ServiceError('No piece in move');
+      }
 
-	private isValidMove = (piece: Piece, to: Position): boolean => {
-		return getValidMovesForPiece(this.board, piece, piece.color).find(pos => pos.x == to.x && pos.y == to.y) !== undefined;
-	}
-	
-	isStalemate = (color: Color): boolean => {
-		const pieces = this.board.flat().filter(p => p && p.color == color) as Piece[];
-		for(const piece of pieces) {
-			const validMoves = getValidMovesForPiece(this.board, piece, color);
-			if(validMoves.length > 0) {
-				return false;
-			}
-		}
-		return true;
-	}
+      return boardAfterMove(currentBoard, move, piece);
+    }, this.board);
+  };
 
-	isCheckMate = (color: Color): boolean => {
-		const opponent = opponentSide(color);
-		const pieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
-		for(const piece of pieces) {
-			const validMoves = getValidMovesForPiece(this.board, piece, opponent);
-			for(const moveTo of validMoves) {
-				const newBoard = boardAfterMove(this.board, { from: piece.pos, to: moveTo }, piece);
-				if(!getKingPosition(newBoard, opponent)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+  private isValidMove = (piece: Piece, to: Position): boolean => {
+    return (
+      getValidMovesForPiece(this.board, piece, piece.color).find(pos => pos.x == to.x && pos.y == to.y) !== undefined
+    );
+  };
 
-	makeMove = (move: Move) => {
-		const piece = this.board[move.from.y][move.from.x];
-		if(!piece) {
-			throw new ServiceError("Cannot move an empty piece");
-		}
+  isStalemate = (color: Color): boolean => {
+    const pieces = this.board.flat().filter(p => p && p.color == color) as Piece[];
+    for (const piece of pieces) {
+      const validMoves = getValidMovesForPiece(this.board, piece, color);
+      if (validMoves.length > 0) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-		if(!this.isValidMove(piece, move.to)) {
-			throw new ServiceError("Move not possible");
-		}
+  isCheckMate = (color: Color): boolean => {
+    const opponent = opponentSide(color);
+    const pieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
+    for (const piece of pieces) {
+      const validMoves = getValidMovesForPiece(this.board, piece, opponent);
+      for (const moveTo of validMoves) {
+        const newBoard = boardAfterMove(this.board, { from: piece.pos, to: moveTo }, piece);
+        if (!getKingPosition(newBoard, opponent)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
 
-		this.board = boardAfterMove(this.board, move, piece);
-	}
+  makeMove = (move: Move) => {
+    const piece = this.board[move.from.y][move.from.x];
+    if (!piece) {
+      throw new ServiceError('Cannot move an empty piece');
+    }
+
+    if (!this.isValidMove(piece, move.to)) {
+      throw new ServiceError('Move not possible');
+    }
+
+    this.board = boardAfterMove(this.board, move, piece);
+  };
 }
 
 export default ChessService;

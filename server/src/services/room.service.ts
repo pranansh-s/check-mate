@@ -1,22 +1,24 @@
-import { Room, ChatMessage } from "@check-mate/shared/types";
-import dbController from "../controllers/db.controller.js";
-import { ServiceError } from "../utils/error.js";
-import { generateRoomKey } from "../utils/room.js";
-import { MessageSchema } from "@check-mate/shared/schemas";
+import { MessageSchema } from '@xhess/shared/schemas';
+import { ChatMessage, Room } from '@xhess/shared/types';
 
-const ROOM_PREFIX = "rooms";
+import dbController from '../controllers/db.controller.js';
+
+import { ServiceError } from '../utils/error.js';
+import { generateRoomKey } from '../utils/room.js';
+
+const ROOM_PREFIX = 'rooms';
 const activeRoomIds: Set<string> = new Set();
 
 const RoomService = {
   getRoom: async (roomId: string): Promise<Room> => {
     const room = await dbController.loadData<Room>(ROOM_PREFIX, roomId);
     if (!room) {
-      throw new ServiceError("Room not found");
+      throw new ServiceError('Room not found');
     }
     return room;
   },
 
-  saveRoom: (roomId: string, room: Room) => {    
+  saveRoom: (roomId: string, room: Room) => {
     return dbController.saveData<Room>(ROOM_PREFIX, room, roomId);
   },
 
@@ -35,7 +37,7 @@ const RoomService = {
 
     await RoomService.saveRoom(roomId, createdRoom);
     activeRoomIds.add(roomId);
-    
+
     return roomId;
   },
 
@@ -46,7 +48,7 @@ const RoomService = {
       return room;
     }
     if (room.participants.length >= 2) {
-      throw new ServiceError("Room already full");
+      throw new ServiceError('Room already full');
     }
     room.participants.push(userId);
 
@@ -56,12 +58,12 @@ const RoomService = {
 
   leaveRoom: async (roomId: string, userId: string) => {
     const room = await RoomService.getRoom(roomId);
-    
+
     if (!room.participants.includes(userId)) {
       return room;
     }
 
-    room.participants = room.participants.filter((id) => id !== userId);
+    room.participants = room.participants.filter(id => id !== userId);
     if (room.participants.length == 0) {
       await RoomService.destroyRoom(roomId);
       return room;
@@ -79,11 +81,11 @@ const RoomService = {
       senderId: userId,
       timestamp: Date.now(),
     };
-    
+
     if (room.chat.length >= 100) {
-      throw new ServiceError("Messages full, create a new room");
+      throw new ServiceError('Messages full, create a new room');
     }
-    
+
     const updatedRoom: Room = {
       ...room,
       chat: [...(room.chat || []), createdMessage],
@@ -91,7 +93,7 @@ const RoomService = {
 
     await RoomService.saveRoom(roomId, updatedRoom);
     return createdMessage;
-  }
-}
+  },
+};
 
 export default RoomService;

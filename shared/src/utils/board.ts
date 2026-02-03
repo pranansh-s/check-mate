@@ -1,6 +1,6 @@
-import { Board, Color, Move, Piece, PieceType } from "../types/chess.js";
+import { Board, Color, Move, Piece, PieceType } from '../types/chess.js';
 
-export const opponentSide = (playerSide: Color): Color => playerSide == 'black' ? 'white' : 'black';
+export const opponentSide = (playerSide: Color): Color => (playerSide == 'black' ? 'white' : 'black');
 
 const createPiece = (type: PieceType, color: Color, x: number, y: number): Piece => ({
   src: `/pieces/${type}-${color}.png`,
@@ -32,12 +32,11 @@ export const boardAfterMove = (board: Board, move: Move, piece: Piece) => {
   const { from, to } = move;
   const newBoard = board.map(row => [...row]);
 
-  const isPawnPromotion = (piece.type == "pawn" && (move.to.y == 0 || move.to.y == 7));
+  const isPawnPromotion = piece.type == 'pawn' && (move.to.y == 0 || move.to.y == 7);
 
-  if(isPawnPromotion) {
+  if (isPawnPromotion) {
     newBoard[to.y][to.x] = createPiece('queen', piece.color, to.x, to.y);
-  }
-  else {
+  } else {
     newBoard[to.y][to.x] = { ...piece, pos: to };
   }
   newBoard[from.y][from.x] = null;

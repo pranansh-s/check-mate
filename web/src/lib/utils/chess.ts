@@ -1,5 +1,5 @@
-import { Board, Move } from '@check-mate/shared/types';
-import { opponentSide, willMoveCheck } from '@check-mate/shared/utils';
+import { Board, Move } from '@xhess/shared/types';
+import { opponentSide, willMoveCheck } from '@xhess/shared/utils';
 
 const COLUMN_LETTERS = 'abcdefgh';
 const ROW_NUMBERS = '12345678';

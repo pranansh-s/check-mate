@@ -1,11 +1,12 @@
 import { CreateRoomResponse, GetRoomResponse } from '@/types/api';
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
+import { Profile } from '@xhess/shared/schemas';
+
 import { axiosConfig } from '@/constants/config';
 
 import { getAccessToken } from './utils/auth';
 import { handleAPIErrors } from './utils/error';
-import { Profile } from '@check-mate/shared/schemas';
 
 const client = axios.create(axiosConfig);
 
@@ -16,7 +17,6 @@ client.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 client.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {

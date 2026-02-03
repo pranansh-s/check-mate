@@ -1,24 +1,21 @@
-import "dotenv/config";
-import express from "express";
-import helmet from "helmet";
-import { createServer } from "http";
+import 'dotenv/config';
 
-import {
-  appCors,
-  appRateLimiter,
-  handleRouteErrors,
-} from "./middleware.js";
-import { configSocket } from "./config.js";
-import SocketController from "./controllers/socket.controller.js";
+import { createServer } from 'http';
 
-import roomRoutes from "./routes/room.router.js";
-import profileRoutes from "./routes/profile.router.js";
+import express from 'express';
+import helmet from 'helmet';
+
+import { configSocket } from './config.js';
+import SocketController from './controllers/socket.controller.js';
+import { appCors, appRateLimiter, handleRouteErrors } from './middleware.js';
+import profileRoutes from './routes/profile.router.js';
+import roomRoutes from './routes/room.router.js';
 
 const app = express();
 const server = createServer(app);
 const io = configSocket(server);
 
-io.on("connection", SocketController);
+io.on('connection', SocketController);
 
 app.use(appCors);
 app.use(appRateLimiter);

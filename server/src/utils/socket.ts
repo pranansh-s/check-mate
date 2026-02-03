@@ -1,100 +1,101 @@
-import { ZodError } from "zod";
-import { DatabaseError, ServiceError } from "./error.js";
-import { Socket } from "socket.io";
-import GameService from "../services/game.service.js";
-import RoomService from "../services/room.service.js";
-import { GameConfig, Move } from "@check-mate/shared/types";
-import ProfileService from "../services/profile.service.js";
+import { Socket } from 'socket.io';
+import { ZodError } from 'zod';
+
+import { GameConfig, Move } from '@xhess/shared/types';
+
+import GameService from '../services/game.service.js';
+import ProfileService from '../services/profile.service.js';
+import RoomService from '../services/room.service.js';
+
+import { DatabaseError, ServiceError } from './error.js';
 
 export const handleErrors = (handler: (...args: any[]) => Promise<void>, socket: Socket, title: string) => {
-	return async (...args: any[]) => {
-		try {
-			await handler(...args);
-		} catch (err) {
-			if (err instanceof ZodError) {
-				console.error("[SOCKET_ERROR]", title, err.issues.map(issue => issue.message).join(', '));
-				socket.emit("error", `${err.issues[0].path}: ${err.issues[0].message}`);
-			} else if (err instanceof ServiceError) {
-				console.error("[SOCKET_ERROR]", title, err.message);
-				socket.emit("error", err.message);
-			} else if (err instanceof DatabaseError) {
-				console.error("[SOCKET_ERROR]", title, err.message);
-				socket.emit("error", "Internal Server Error");
-			} else {
-				console.error("[SOCKET_ERROR]", title, err);
-				socket.emit("error", "Internal Server Error");
-			}
-		}
-	};
+  return async (...args: any[]) => {
+    try {
+      await handler(...args);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        console.error('[SOCKET_ERROR]', title, err.issues.map(issue => issue.message).join(', '));
+        socket.emit('error', `${err.issues[0].path}: ${err.issues[0].message}`);
+      } else if (err instanceof ServiceError) {
+        console.error('[SOCKET_ERROR]', title, err.message);
+        socket.emit('error', err.message);
+      } else if (err instanceof DatabaseError) {
+        console.error('[SOCKET_ERROR]', title, err.message);
+        socket.emit('error', 'Internal Server Error');
+      } else {
+        console.error('[SOCKET_ERROR]', title, err);
+        socket.emit('error', 'Internal Server Error');
+      }
+    }
+  };
 };
 
 export const socketHandlers = (socket: Socket) => {
-	let currentRoomId: string | null = null;
-	let currentUserId: string | null = null;
+  let currentRoomId: string | null = null;
+  let currentUserId: string | null = null;
 
-	return {
-		joinRoom: async (roomId: string, userId: string) => {
-			if (currentRoomId && currentRoomId !== roomId) {
-				await RoomService.leaveRoom(currentRoomId, userId);
-				socket.leave(currentRoomId);
-			}
+  return {
+    joinRoom: async (roomId: string, userId: string) => {
+      if (currentRoomId && currentRoomId !== roomId) {
+        await RoomService.leaveRoom(currentRoomId, userId);
+        socket.leave(currentRoomId);
+      }
 
-			socket.join(roomId);
-			currentRoomId = roomId;
-			currentUserId = userId;
-			
-			const game = await GameService
-				.joinGame(roomId, userId)
-				.catch((err) =>
-					err instanceof ServiceError ? null : Promise.reject(err)
-			);
+      socket.join(roomId);
+      currentRoomId = roomId;
+      currentUserId = userId;
 
-			if(game) {
-				const { myProfile, opponentProfile } = await ProfileService.getPlayerProfiles(currentRoomId, currentUserId);
-				
-				socket.emit("gameJoined", game, opponentProfile);
-				socket.to(currentRoomId).emit("gameJoined", game, myProfile);
-			}
-		},
+      const game = await GameService.joinGame(roomId, userId).catch(err =>
+        err instanceof ServiceError ? null : Promise.reject(err)
+      );
 
-		sendChatMessage: async (content: string) => {
-			if (!currentRoomId || !currentUserId) return;
+      if (game) {
+        const { myProfile, opponentProfile } = await ProfileService.getPlayerProfiles(currentRoomId, currentUserId);
 
-			const message = await RoomService.sendMessage(currentRoomId, currentUserId, content);
+        socket.emit('gameJoined', game, opponentProfile);
+        socket.to(currentRoomId).emit('gameJoined', game, myProfile);
+      }
+    },
 
-			socket.emit('receiveChatMessage', message);
-			socket.to(currentRoomId).emit("receiveChatMessage", message);
-		},
+    sendChatMessage: async (content: string) => {
+      if (!currentRoomId || !currentUserId) return;
 
-		newGame: async (config: GameConfig) => {	
-			if (!currentRoomId || !currentUserId) return;
+      const message = await RoomService.sendMessage(currentRoomId, currentUserId, content);
 
-			const newGame = await GameService.createGame(config, currentRoomId, currentUserId);
-			const { myProfile, opponentProfile } = await ProfileService.getPlayerProfiles(currentRoomId, currentUserId);
+      socket.emit('receiveChatMessage', message);
+      socket.to(currentRoomId).emit('receiveChatMessage', message);
+    },
 
-			socket.emit("gameJoined", newGame, opponentProfile);
-			socket.to(currentRoomId).emit("gameJoined", newGame, myProfile);
-		},
+    newGame: async (config: GameConfig) => {
+      if (!currentRoomId || !currentUserId) return;
 
-		newMove: async (move: Move) => {
-			if (!currentRoomId || !currentUserId) return;
+      const newGame = await GameService.createGame(config, currentRoomId, currentUserId);
+      const { myProfile, opponentProfile } = await ProfileService.getPlayerProfiles(currentRoomId, currentUserId);
 
-			const game = await GameService.addMove(currentRoomId, move);
-      
-      socket.emit("moveUpdate", game);
-      socket.to(currentRoomId).emit("moveUpdate", game);
-		},
+      socket.emit('gameJoined', newGame, opponentProfile);
+      socket.to(currentRoomId).emit('gameJoined', newGame, myProfile);
+    },
 
-		disconnect: async () => {
-			if (!currentRoomId || !currentUserId) return;
+    newMove: async (move: Move) => {
+      if (!currentRoomId || !currentUserId) return;
 
-			await RoomService.leaveRoom(currentRoomId, currentUserId);
-			await GameService.updateRemainingTime(currentRoomId);
+      const game = await GameService.addMove(currentRoomId, move);
 
-			socket.leave(currentRoomId);
+      socket.emit('moveUpdate', game);
+      socket.to(currentRoomId).emit('moveUpdate', game);
+    },
 
-			currentRoomId = null;
-			currentUserId = null;
-		}
-	}
-}
+    disconnect: async () => {
+      if (!currentRoomId || !currentUserId) return;
+
+      await RoomService.leaveRoom(currentRoomId, currentUserId);
+      await GameService.updateRemainingTime(currentRoomId);
+
+      socket.leave(currentRoomId);
+
+      currentRoomId = null;
+      currentUserId = null;
+    },
+  };
+};

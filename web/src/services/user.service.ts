@@ -1,13 +1,15 @@
 import { signOut } from 'firebase/auth';
 
-import { auth } from '@/lib/firebase';
+import { Profile } from '@xhess/shared/schemas';
+
 import { handleErrors } from '@/lib/utils/error';
+
+import { get_profile, post_create_profile } from '@/lib/api';
+import { auth } from '@/lib/firebase';
 import { onLogin, onLogout } from '@/redux/features/userSlice';
 import { store } from '@/redux/store';
 
 import { strings } from '@/constants/strings';
-import { post_create_profile, get_profile } from '@/lib/api';
-import { Profile } from '@check-mate/shared/schemas';
 
 const UserService = {
   createProfile: async (displayName: string, email: string): Promise<Profile> => {
@@ -25,7 +27,7 @@ const UserService = {
       sessionStorage.setItem('profile', JSON.stringify(profile));
       return profile;
     } catch (err) {
-      console.error("Failed to create profile: ", err);
+      console.error('Failed to create profile: ', err);
       throw err;
     }
   },

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
-import { Board, Color, Piece } from '@check-mate/shared/types';
-import { getValidMovesForPiece } from '@check-mate/shared/utils';
+import { Board, Color, Piece } from '@xhess/shared/types';
+import { getValidMovesForPiece } from '@xhess/shared/utils';
 
 const useValidMoves = (board: Board, activePiece: Piece | null, side: Color) => {
   const validMoves = useMemo(

@@ -15,7 +15,7 @@ export const UserRegisterSchema = UserLoginSchema.extend({
   displayName: z.string().min(1, 'Display name is required'),
   confirmPassword: z.string(),
 }).refine(data => data.password === data.confirmPassword, {
-  message:  'Passwords do not match',
+  message: 'Passwords do not match',
   path: ['confirmPassword'],
 });
 

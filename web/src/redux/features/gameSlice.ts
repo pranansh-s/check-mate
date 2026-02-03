@@ -1,7 +1,8 @@
 import UserService from '@/services/user.service';
-import { Profile } from '@check-mate/shared/schemas';
-import { Color, Game, GameType, PlayerState } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { Profile } from '@xhess/shared/schemas';
+import { Color, Game, GameType, PlayerState } from '@xhess/shared/types';
 
 const initialState = {
   isTurn: true,
@@ -12,7 +13,7 @@ const initialState = {
     whiteSidePlayer: null as PlayerState | null,
     blackSidePlayer: null as PlayerState | null,
   },
-  opponentProfile: null as Profile | null
+  opponentProfile: null as Profile | null,
 };
 
 const gameSlice = createSlice({
@@ -35,12 +36,12 @@ const gameSlice = createSlice({
         isTurn: playerSide == playerTurn,
         playerSide,
         gameType,
-        isPlaying: state == "isPlaying",
+        isPlaying: state == 'isPlaying',
         players: {
           whiteSidePlayer,
-          blackSidePlayer
+          blackSidePlayer,
         },
-        opponentProfile: null
+        opponentProfile: null,
       };
     },
 
@@ -53,7 +54,7 @@ const gameSlice = createSlice({
     },
 
     setOpponentProfile: (state, action: PayloadAction<Profile | null>) => {
-      state.opponentProfile = action.payload
+      state.opponentProfile = action.payload;
     },
 
     endTurn: state => {

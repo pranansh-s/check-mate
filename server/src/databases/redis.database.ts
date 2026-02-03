@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from "redis";
+import { createClient, RedisClientType } from 'redis';
 
 class RedisService {
   private client: RedisClientType;
@@ -11,9 +11,9 @@ class RedisService {
   }
 
   private initEventListeners = () => {
-    this.client.on("connect", () => console.log("Redis connected"));
-    this.client.on("error", (err) => console.error("Redis error:", err));
-    this.client.on("end", () => console.log("Redis disconnected"));
+    this.client.on('connect', () => console.log('Redis connected'));
+    this.client.on('error', err => console.error('Redis error:', err));
+    this.client.on('end', () => console.log('Redis disconnected'));
   };
 
   getItem = async <T extends object>(key: string): Promise<T | null> => {
@@ -21,8 +21,8 @@ class RedisService {
       const data = await this.client.get(key);
       return data ? JSON.parse(data) : null;
     } catch (err) {
-      console.error("Redis GET failed:", err);
-      throw new Error;
+      console.error('Redis GET failed:', err);
+      throw new Error();
     }
   };
 
@@ -32,8 +32,8 @@ class RedisService {
         EX: this.TTL_MIN * 60,
       });
     } catch (err) {
-      console.error("Redis SET failed:", err);
-      throw new Error;
+      console.error('Redis SET failed:', err);
+      throw new Error();
     }
   };
 
@@ -41,8 +41,8 @@ class RedisService {
     try {
       return this.client.del(key);
     } catch (err) {
-      console.error("Redis DEL failed:", err);
-      throw new Error;
+      console.error('Redis DEL failed:', err);
+      throw new Error();
     }
   };
 

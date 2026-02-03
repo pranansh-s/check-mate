@@ -1,6 +1,7 @@
-import { DatabaseError } from "../utils/error.js";
-import FirebaseService from "../databases/firebase.database.js";
-import RedisService from "../databases/redis.database.js";
+import FirebaseService from '../databases/firebase.database.js';
+import RedisService from '../databases/redis.database.js';
+
+import { DatabaseError } from '../utils/error.js';
 
 class DatabaseController {
   private static instance: DatabaseController = new DatabaseController();
@@ -17,7 +18,7 @@ class DatabaseController {
   static getInstance(): DatabaseController {
     return this.instance;
   }
-  
+
   //propogate firebase console delete or modify for cache
   loadData = async <T extends object>(prefix: string, id: string): Promise<T | null> => {
     const cacheKey = `${prefix}:${id}`;
@@ -36,7 +37,7 @@ class DatabaseController {
       return data;
     } catch (err) {
       console.error(`Database load operation failed for ${prefix}/${id}`);
-      throw new DatabaseError;
+      throw new DatabaseError();
     }
   };
 
@@ -47,7 +48,7 @@ class DatabaseController {
       await this.redis.setItem<T>(cacheKey, data);
     } catch (err) {
       console.error(`Database save operation failed for ${prefix}/${id}`);
-      throw new DatabaseError;
+      throw new DatabaseError();
     }
   };
 
@@ -58,7 +59,7 @@ class DatabaseController {
       await this.redis.removeItem(cacheKey);
     } catch (err) {
       console.error(`Database delete operation failed for ${prefix}/${id}`);
-      throw new DatabaseError;
+      throw new DatabaseError();
     }
   };
 }

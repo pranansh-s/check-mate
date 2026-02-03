@@ -1,7 +1,9 @@
 'use client';
 
-import { Room } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
+
+import { Profile } from '@xhess/shared/schemas';
+import { Room } from '@xhess/shared/types';
 
 import useRoomInit from '@/hooks/useRoomInit';
 import { useAppSelector } from '@/redux/hooks';
@@ -10,7 +12,6 @@ import GameBar from '../game-bar';
 import GameSettings from '../modals/GameSettings';
 import Waiting from '../modals/Waiting';
 import GameUI from './GameUI';
-import { Profile } from '@check-mate/shared/schemas';
 
 interface IRoomProps {
   roomId: string;

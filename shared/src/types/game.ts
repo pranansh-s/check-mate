@@ -1,12 +1,7 @@
-import { Color, Move } from "./chess.js";
+import { Color, Move } from './chess.js';
 
-export type GameType = "30m" | "10m" | "3m";
-export type GameState =
-  | "isWaiting"
-  | "isPlaying"
-  | "whiteWin"
-  | "blackWin"
-  | "draw";
+export type GameType = '30m' | '10m' | '3m';
+export type GameState = 'isWaiting' | 'isPlaying' | 'whiteWin' | 'blackWin' | 'draw';
 
 export interface GameConfig {
   playerSide: Color;

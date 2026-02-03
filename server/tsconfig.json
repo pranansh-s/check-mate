@@ -4,13 +4,13 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmitOnError": true,
-    "module": "nodenext", 
+    "module": "nodenext",
     "rootDir": "./src",
     "outDir": "./dist",
     "moduleResolution": "nodenext",
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
+    "incremental": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

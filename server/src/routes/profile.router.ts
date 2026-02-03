@@ -1,34 +1,35 @@
-import express from "express";
-import ProfileService from "../services/profile.service.js";
-import { handleAuthValidation } from "../middleware.js";
-import { ProfileSchema } from "@check-mate/shared/schemas";
+import express from 'express';
+
+import { ProfileSchema } from '@xhess/shared/schemas';
+
+import ProfileService from '../services/profile.service.js';
+
+import { handleAuthValidation } from '../middleware.js';
 
 const router = express.Router();
 
 router.get('/profile', handleAuthValidation, async (req, res, next) => {
-	try {
-		const userId = req.userId;
-		const profile = await ProfileService.getProfile(userId);
+  try {
+    const userId = req.userId;
+    const profile = await ProfileService.getProfile(userId);
 
-		res.status(200).json(profile);
-	}
-	catch (err) {
-		next(err);
-	}
+    res.status(200).json(profile);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post('/new-profile', handleAuthValidation, async (req, res, next) => {
-	try {
-		const userId = req.userId;
-		const newProfile = ProfileSchema.parse(req.body);
-		
-		await ProfileService.saveProfile({ ...newProfile, createdAt: Date.now() }, userId);
+  try {
+    const userId = req.userId;
+    const newProfile = ProfileSchema.parse(req.body);
 
-		res.status(201).json(newProfile);
-	}
-	catch (err) {
-		next(err);
-	}
+    await ProfileService.saveProfile({ ...newProfile, createdAt: Date.now() }, userId);
+
+    res.status(201).json(newProfile);
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

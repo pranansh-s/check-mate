@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -11,7 +11,7 @@ interface ITimerProps {
 
 const Timer = ({ left, ticking }: ITimerProps) => {
   const [displayTime, setDisplayTime] = useState<number>(left);
-  
+
   const formatTime = useCallback((val: number) => {
     const totalSeconds = Math.floor(val / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -39,8 +39,8 @@ const Timer = ({ left, ticking }: ITimerProps) => {
 export default Timer;
 
 const TimerContainer = tw.div<{ $isTicking: boolean }>`
-	${p => (p.$isTicking ? 'opacity-100' : 'opacity-50')} 
-	h-max
+  ${p => (p.$isTicking ? 'opacity-100' : 'opacity-50')}
+  h-max
   rounded-lg
   bg-secondary
   px-4

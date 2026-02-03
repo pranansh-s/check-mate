@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Position } from '@check-mate/shared/types';
+import { Position } from '@xhess/shared/types';
 
 import { goToMove } from '@/redux/features/boardSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';

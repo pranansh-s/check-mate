@@ -3,15 +3,16 @@
 import { memo, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { RoomKeySchema } from '@check-mate/shared/schemas';
+import { RoomKeySchema } from '@xhess/shared/schemas';
+
+import { handleErrors } from '@/lib/utils/error';
+import { formatRoomKey } from '@/lib/utils/room';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import ModalContainer from '@/components/modals/Modal';
 
 import { useForm } from '@/hooks/useForm';
-import { handleErrors } from '@/lib/utils/error';
-import { formatRoomKey } from '@/lib/utils/room';
 
 import { strings } from '@/constants/strings';
 
@@ -20,13 +21,16 @@ const JoinRoom = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedValue =
-      e.target.value.length > formState.roomKey?.value?.length ? formatRoomKey(e.target.value) : e.target.value;
-    setFormState({
-      roomKey: { value: formattedValue, error: undefined },
-    });
-  }, [setFormState]);
+  const handleInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const formattedValue =
+        e.target.value.length > formState.roomKey?.value?.length ? formatRoomKey(e.target.value) : e.target.value;
+      setFormState({
+        roomKey: { value: formattedValue, error: undefined },
+      });
+    },
+    [setFormState]
+  );
 
   const handleRoomJoin = useCallback(() => {
     setLoading(true);

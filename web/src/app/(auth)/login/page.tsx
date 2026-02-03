@@ -3,21 +3,23 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { UserLoginSchema } from '@check-mate/shared/schemas';
+import UserService from '@/services/user.service';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+
+import { UserLoginSchema } from '@xhess/shared/schemas';
+
+import { handleErrors } from '@/lib/utils/error';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 
 import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/firebase';
-import { handleErrors } from '@/lib/utils/error';
 
 import { strings } from '@/constants/strings';
 
 import mailIcon from '@/../public/icons/mail.svg';
 import passwordIcon from '@/../public/icons/password.svg';
-import UserService from '@/services/user.service';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,7 +37,7 @@ export default function LoginPage() {
       });
 
       await signInWithEmailAndPassword(auth, email, password);
-      
+
       router.push('/');
     } catch (err) {
       handleErrors(err, strings.auth.errors.loginFail, setFormState);

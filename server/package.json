@@ -1,5 +1,5 @@
 {
-  "name": "@check-mate/server",
+  "name": "@xhess/server",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -23,7 +23,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@check-mate/shared": "1.0.0",
+    "@xhess/shared": "1.0.0",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.7",
     "tsx": "^4.20.3",

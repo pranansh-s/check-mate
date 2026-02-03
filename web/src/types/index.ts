@@ -1,5 +1,6 @@
-import { GameType } from '@check-mate/shared/types';
 import { Group } from 'three';
+
+import { GameType } from '@xhess/shared/types';
 
 export type ModalType = 'gameSettings' | 'joinRoom' | 'waiting' | null;
 

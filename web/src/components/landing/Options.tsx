@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import tw from 'tailwind-styled-components';
 
+import { getErrorMessage } from '@/lib/utils/error';
+import { createRoom } from '@/lib/utils/room';
+
 import Button from '@/components/common/Button';
 
 import { auth } from '@/lib/firebase';
-import { getErrorMessage } from '@/lib/utils/error';
-import { createRoom } from '@/lib/utils/room';
 import { openModal } from '@/redux/features/modalSlice';
 
 const Options = () => {

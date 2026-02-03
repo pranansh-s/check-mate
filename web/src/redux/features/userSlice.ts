@@ -1,5 +1,6 @@
-import { Profile } from '@check-mate/shared/schemas';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { Profile } from '@xhess/shared/schemas';
 
 const userSlice = createSlice({
   name: 'user',

@@ -3,13 +3,15 @@
 import { useCallback, useState } from 'react';
 
 import SocketService from '@/services/socket.service';
-import { MessageSchema } from '@check-mate/shared/schemas';
 import tw from 'tailwind-styled-components';
 import { ZodError } from 'zod/v4';
 
-import Button from '@/components/common/Button';
+import { MessageSchema } from '@xhess/shared/schemas';
 
 import { handleErrors } from '@/lib/utils/error';
+
+import Button from '@/components/common/Button';
+
 import { addMessage } from '@/redux/features/chatSlice';
 import { useAppDispatch } from '@/redux/hooks';
 
@@ -41,12 +43,15 @@ const ChatInput = () => {
     }
   }, [message]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isSending) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  }, [isSending, handleSendMessage]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey && !isSending) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [isSending, handleSendMessage]
+  );
 
   return (
     <InputArea>
@@ -89,9 +94,9 @@ const InputField = tw.textarea`
 `;
 
 const SendButton = tw(Button)`
+  -mt-1
   h-10
   !flex-none
-  -mt-1
 `;
 
 export default ChatInput;

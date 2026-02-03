@@ -4,10 +4,12 @@ import { memo } from 'react';
 import Image from 'next/image';
 
 import SocketService from '@/services/socket.service';
-import { Move, Piece, Position } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
 
+import { Move, Piece, Position } from '@xhess/shared/types';
+
 import { handleErrors } from '@/lib/utils/error';
+
 import { deSelectPiece, selectPiece } from '@/redux/features/boardSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 

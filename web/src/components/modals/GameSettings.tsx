@@ -4,10 +4,11 @@ import { memo, useCallback, useRef, useState } from 'react';
 
 import { gameTypeOptions } from '@/constants';
 import SocketService from '@/services/socket.service';
-import { Color, GameConfig, GameType } from '@check-mate/shared/types';
 import { Canvas, useFrame } from '@react-three/fiber';
 import tw from 'tailwind-styled-components';
 import { Group, MathUtils } from 'three';
+
+import { Color, GameConfig, GameType } from '@xhess/shared/types';
 
 import Button from '../common/Button';
 import ChessModel, { IChessModelProps } from '../common/ChessModel';

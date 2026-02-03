@@ -1,14 +1,17 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID } from 'node:crypto';
 
-import dbController from "../controllers/db.controller.js";
-import { ServiceError } from "../utils/error.js";
-import { Game, GameConfig, Move, PlayerState } from "@check-mate/shared/types";
-import { checkEndGame, GAME_TIME_MS, updateTimeLeft } from "../utils/game.js";
-import { opponentSide } from "@check-mate/shared/utils";
-import ChessService from "./chess.service.js";
-import RoomService from "./room.service.js";
+import { Game, GameConfig, Move, PlayerState } from '@xhess/shared/types';
+import { opponentSide } from '@xhess/shared/utils';
 
-const GAME_PREFIX = "games";
+import dbController from '../controllers/db.controller.js';
+
+import { ServiceError } from '../utils/error.js';
+import { checkEndGame, GAME_TIME_MS, updateTimeLeft } from '../utils/game.js';
+
+import ChessService from './chess.service.js';
+import RoomService from './room.service.js';
+
+const GAME_PREFIX = 'games';
 const roomToGameId = new Map<string, string>();
 const chessCache = new Map<string, ChessService>();
 
@@ -16,7 +19,7 @@ const GameService = {
   getGameId: (roomId: string): string => {
     const gameId = roomToGameId.get(roomId);
     if (!gameId) {
-      throw new ServiceError("No game in room");
+      throw new ServiceError('No game in room');
     }
     return gameId;
   },
@@ -24,7 +27,7 @@ const GameService = {
   getGame: async (id: string): Promise<Game> => {
     const game = await dbController.loadData<Game>(GAME_PREFIX, id);
     if (!game) {
-      throw new ServiceError("Game not found");
+      throw new ServiceError('Game not found');
     }
     return game;
   },
@@ -37,11 +40,11 @@ const GameService = {
     const gameId = GameService.getGameId(roomId);
     const game = await GameService.getGame(gameId);
 
-    const isPlaying = game.state === "isPlaying";
-    if(!isPlaying) {
-      throw new ServiceError("Game is not in playing state");
+    const isPlaying = game.state === 'isPlaying';
+    if (!isPlaying) {
+      throw new ServiceError('Game is not in playing state');
     }
-    
+
     const chess = chessCache.get(gameId) || new ChessService(game);
     chessCache.set(gameId, chess);
 
@@ -78,45 +81,47 @@ const GameService = {
       userId,
       remainingTime: GAME_TIME_MS[game.gameType].baseTime,
     };
-    
+
     if (!game.whiteSidePlayer) {
       game.whiteSidePlayer = newPlayer;
     } else if (!game.blackSidePlayer) {
       game.blackSidePlayer = newPlayer;
     }
-    
+
     if (game.whiteSidePlayer && game.blackSidePlayer) {
-      game.state = "isPlaying";
+      game.state = 'isPlaying';
     }
 
     game.lastPlayedAt = Date.now();
-    
+
     await GameService.saveGame(game, gameId);
     return game;
   },
 
   createGame: async (config: GameConfig, roomId: string, userId: string): Promise<Game> => {
     const { playerSide, gameType } = config;
-    
+
     const playerState: PlayerState = {
       userId,
       remainingTime: GAME_TIME_MS[gameType].baseTime,
     };
-    
-    const opponentUserId = (await RoomService.getRoom(roomId)).participants.find((id) => id !== userId);
-    
-    const opponentPlayerState: PlayerState | null = opponentUserId ? {
-      userId: opponentUserId,
-      remainingTime: GAME_TIME_MS[gameType].baseTime,
-    } : null;
+
+    const opponentUserId = (await RoomService.getRoom(roomId)).participants.find(id => id !== userId);
+
+    const opponentPlayerState: PlayerState | null = opponentUserId
+      ? {
+          userId: opponentUserId,
+          remainingTime: GAME_TIME_MS[gameType].baseTime,
+        }
+      : null;
 
     const newGame: Game = {
       moves: [],
-      playerTurn: "white",
-      state: opponentPlayerState ? "isPlaying" : "isWaiting",
+      playerTurn: 'white',
+      state: opponentPlayerState ? 'isPlaying' : 'isWaiting',
 
-      whiteSidePlayer: playerSide == "white" ? playerState : opponentPlayerState,
-      blackSidePlayer: playerSide == "black" ? playerState : opponentPlayerState,
+      whiteSidePlayer: playerSide == 'white' ? playerState : opponentPlayerState,
+      blackSidePlayer: playerSide == 'black' ? playerState : opponentPlayerState,
       gameType,
       createdAt: Date.now(),
 
@@ -129,6 +134,6 @@ const GameService = {
     await GameService.saveGame(newGame, uuid);
     return newGame;
   },
-}
+};
 
 export default GameService;

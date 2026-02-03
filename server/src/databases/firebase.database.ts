@@ -1,6 +1,7 @@
-import admin from "firebase-admin";
-import { Firestore } from "firebase-admin/firestore";
-import { configFirebase } from "../config.js";
+import admin from 'firebase-admin';
+import { Firestore } from 'firebase-admin/firestore';
+
+import { configFirebase } from '../config.js';
 
 class FirebaseService {
   private db: Firestore;
@@ -19,8 +20,8 @@ class FirebaseService {
       const docSnapshot = await this.db.collection(collection).doc(id).get();
       return docSnapshot.exists ? (docSnapshot.data() as T) : null;
     } catch (err) {
-      console.error("Firebase GET failed:", err);
-      throw new Error;
+      console.error('Firebase GET failed:', err);
+      throw new Error();
     }
   };
 
@@ -28,8 +29,8 @@ class FirebaseService {
     try {
       return this.db.collection(collection).doc(id).set(data);
     } catch (err) {
-      console.error("Firebase SET failed:", err);
-      throw new Error;
+      console.error('Firebase SET failed:', err);
+      throw new Error();
     }
   };
 
@@ -37,8 +38,8 @@ class FirebaseService {
     try {
       return this.db.collection(collection).doc(id).delete();
     } catch (err) {
-      console.error("Firebase DEL failed:", err);
-      throw new Error;
+      console.error('Firebase DEL failed:', err);
+      throw new Error();
     }
   };
 }

@@ -1,6 +1,6 @@
-import { CARDINAL_DIRECTIONS, DIAGONAL_DIRECTIONS, KNIGHT_DIRECTIONS } from "../constants/index.js";
-import { Board, Color, Move, Piece, Position } from "../types/chess.js";
-import { boardAfterMove } from "./board.js";
+import { CARDINAL_DIRECTIONS, DIAGONAL_DIRECTIONS, KNIGHT_DIRECTIONS } from '../constants/index.js';
+import { Board, Color, Move, Piece, Position } from '../types/chess.js';
+import { boardAfterMove } from './board.js';
 
 export const getValidMovesForPiece = (board: Board, piece: Piece, player: Color): Position[] => {
   const validMoves: Position[] = [];
@@ -81,65 +81,64 @@ export const getKingPosition = (board: Board, kingColor: Color): Position | null
     }
   }
   return null;
-}
+};
 
 export const willMoveCheck = (board: Board, move: Move, kingColor: Color): boolean => {
-	const movingPiece = board[move.from.y][move.from.x];
+  const movingPiece = board[move.from.y][move.from.x];
   if (!movingPiece) return false;
 
   let kingPos;
   if (movingPiece.type === 'king' && movingPiece.color === kingColor) {
     kingPos = move.to;
-  }
-  else {
+  } else {
     kingPos = getKingPosition(board, kingColor);
   }
-	if (!kingPos) return false;
-	
-	const newBoard = boardAfterMove(board, move, movingPiece);
-	for (const { dx, dy } of DIAGONAL_DIRECTIONS) {
-		for (let i = 1; i <= 7; i++) {
-			const newX = kingPos.x + dx * i;
-			const newY = kingPos.y + dy * i;
+  if (!kingPos) return false;
 
-			if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
+  const newBoard = boardAfterMove(board, move, movingPiece);
+  for (const { dx, dy } of DIAGONAL_DIRECTIONS) {
+    for (let i = 1; i <= 7; i++) {
+      const newX = kingPos.x + dx * i;
+      const newY = kingPos.y + dy * i;
 
-			if (newBoard[newY][newX]) {
-				if (newBoard[newY][newX].color !== kingColor) {
-					const pieceType = newBoard[newY][newX].type;
-					if (pieceType === 'bishop' || pieceType === 'queen' || (pieceType === 'pawn' && i == 1)) return true;
-				}
-				break;
-			}
-		}
-	}
+      if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
 
-	for (const { dx, dy } of CARDINAL_DIRECTIONS) {
-		for (let i = 1; i <= 7; i++) {
-			const newX = kingPos.x + dx * i;
-			const newY = kingPos.y + dy * i;
+      if (newBoard[newY][newX]) {
+        if (newBoard[newY][newX].color !== kingColor) {
+          const pieceType = newBoard[newY][newX].type;
+          if (pieceType === 'bishop' || pieceType === 'queen' || (pieceType === 'pawn' && i == 1)) return true;
+        }
+        break;
+      }
+    }
+  }
 
-			if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
+  for (const { dx, dy } of CARDINAL_DIRECTIONS) {
+    for (let i = 1; i <= 7; i++) {
+      const newX = kingPos.x + dx * i;
+      const newY = kingPos.y + dy * i;
 
-			if (newBoard[newY][newX]) {
-				if (newBoard[newY][newX].color !== kingColor) {
-					const pieceType = newBoard[newY][newX].type;
-					if (pieceType === 'rook' || pieceType === 'queen') return true;
-				}
-				break;
-			}
-		}
-	}
+      if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
 
-	for (const { dx, dy } of KNIGHT_DIRECTIONS) {
-		const newX = kingPos.x + dx;
-		const newY = kingPos.y + dy;
+      if (newBoard[newY][newX]) {
+        if (newBoard[newY][newX].color !== kingColor) {
+          const pieceType = newBoard[newY][newX].type;
+          if (pieceType === 'rook' || pieceType === 'queen') return true;
+        }
+        break;
+      }
+    }
+  }
 
-		if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
+  for (const { dx, dy } of KNIGHT_DIRECTIONS) {
+    const newX = kingPos.x + dx;
+    const newY = kingPos.y + dy;
 
-		if (newBoard[newY][newX] && newBoard[newY][newX].color !== kingColor) {
-			if (newBoard[newY][newX].type === 'knight') return true;
-		}
-	}
-	return false;
+    if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
+
+    if (newBoard[newY][newX] && newBoard[newY][newX].color !== kingColor) {
+      if (newBoard[newY][newX].type === 'knight') return true;
+    }
+  }
+  return false;
 };

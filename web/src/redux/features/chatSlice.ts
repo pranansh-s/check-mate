@@ -1,5 +1,6 @@
-import { ChatMessage } from '@check-mate/shared/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { ChatMessage } from '@xhess/shared/types';
 
 const chatSlice = createSlice({
   name: 'chat',

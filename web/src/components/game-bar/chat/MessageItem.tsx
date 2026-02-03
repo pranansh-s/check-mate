@@ -2,8 +2,9 @@
 
 import { memo } from 'react';
 
-import { ChatMessage } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
+
+import { ChatMessage } from '@xhess/shared/types';
 
 const toTime = (val: number): string => {
   const date = new Date(val);
