@@ -9,7 +9,7 @@ import { useAppDispatch } from '@/redux/hooks';
 import UserService from '@/services/user.service';
 import { Profile } from '@check-mate/shared/schemas';
 
-const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Game | null, opponentProfile: Profile | null) => {
+const useRoomInit = (currentRoomId: string, currentRoom: Room) => {
   const userId = UserService.getUserId();
   const dispatch = useAppDispatch();
 
@@ -18,13 +18,6 @@ const useRoomInit = (currentRoomId: string, currentRoom: Room, existingGame: Gam
 
     SocketService.initSocket(currentRoomId, userId, dispatch);
     dispatch(initMessages(currentRoom.chat));
-
-    console.log(currentRoom, existingGame);
-
-    if (existingGame) {
-      SocketService.initGame(dispatch, existingGame, opponentProfile);
-      return;
-    }
 
     const isOwner = currentRoom.createdBy === userId;
     dispatch(openModal(isOwner ? 'gameSettings' : 'waiting'));

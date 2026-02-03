@@ -41,13 +41,10 @@ const SocketService = {
   },
 
   initGame: (dispatch: AppDispatch, game: Game, profile: Profile | null) => {
-    
     SocketService.updatePlayerState(dispatch, game);
     dispatch(initMoves(game.moves));
     dispatch(initGameState(game));
-    if(profile) {
-      dispatch(setOpponentProfile(profile));
-    }
+    dispatch(setOpponentProfile(profile));
     dispatch(closeModal());
   },
 

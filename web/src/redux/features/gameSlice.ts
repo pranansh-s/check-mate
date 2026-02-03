@@ -52,7 +52,7 @@ const gameSlice = createSlice({
       state.players.blackSidePlayer = action.payload;
     },
 
-    setOpponentProfile: (state, action: PayloadAction<Profile>) => {
+    setOpponentProfile: (state, action: PayloadAction<Profile | null>) => {
       state.opponentProfile = action.payload
     },
 

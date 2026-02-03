@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -32,8 +32,6 @@ const Timer = ({ left, ticking }: ITimerProps) => {
 
     return () => clearInterval(interval);
   }, [ticking]);
-
-
 
   return <TimerContainer $isTicking={ticking}>{formatTime(displayTime)}</TimerContainer>;
 };

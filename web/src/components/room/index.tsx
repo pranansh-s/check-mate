@@ -1,6 +1,6 @@
 'use client';
 
-import { Game, Room } from '@check-mate/shared/types';
+import { Room } from '@check-mate/shared/types';
 import tw from 'tailwind-styled-components';
 
 import useRoomInit from '@/hooks/useRoomInit';
@@ -15,13 +15,11 @@ import { Profile } from '@check-mate/shared/schemas';
 interface IRoomProps {
   roomId: string;
   room: Room;
-  game: Game | null;
-  opponentProfile: Profile | null;
 }
 
-const RoomClient: React.FC<IRoomProps> = ({ roomId, room, game, opponentProfile }) => {
+const RoomClient: React.FC<IRoomProps> = ({ roomId, room }) => {
   const activeModal = useAppSelector(state => state.modals);
-  useRoomInit(roomId, room, game, opponentProfile);
+  useRoomInit(roomId, room);
 
   return (
     <RoomContainer>

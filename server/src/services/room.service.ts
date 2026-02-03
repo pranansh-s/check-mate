@@ -54,7 +54,7 @@ const RoomService = {
     return room;
   },
 
-  leaveRoom: async (roomId: string, userId: string): Promise<Room> => {
+  leaveRoom: async (roomId: string, userId: string) => {
     const room = await RoomService.getRoom(roomId);
     
     if (!room.participants.includes(userId)) {
@@ -68,7 +68,6 @@ const RoomService = {
     }
 
     await RoomService.saveRoom(roomId, room);
-    return room;
   },
 
   sendMessage: async (roomId: string, userId: string, content: string): Promise<ChatMessage> => {

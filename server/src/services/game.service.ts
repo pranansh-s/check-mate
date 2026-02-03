@@ -6,6 +6,7 @@ import { Game, GameConfig, Move, PlayerState } from "@check-mate/shared/types";
 import { checkEndGame, GAME_TIME_MS, updateTimeLeft } from "../utils/game.js";
 import { opponentSide } from "@check-mate/shared/utils";
 import ChessService from "./chess.service.js";
+import RoomService from "./room.service.js";
 
 const GAME_PREFIX = "games";
 const roomToGameId = new Map<string, string>();
@@ -57,6 +58,14 @@ const GameService = {
     return game;
   },
 
+  updateRemainingTime: async (roomId: string) => {
+    const gameId = GameService.getGameId(roomId);
+    const game = await GameService.getGame(gameId);
+
+    updateTimeLeft(game, true);
+    await GameService.saveGame(game, gameId);
+  },
+
   joinGame: async (roomId: string, userId: string): Promise<Game> => {
     const gameId = GameService.getGameId(roomId);
     const game = await GameService.getGame(gameId);
@@ -80,20 +89,22 @@ const GameService = {
       game.state = "isPlaying";
     }
 
-    updateTimeLeft(game, false);
+    game.lastPlayedAt = Date.now();
     
     await GameService.saveGame(game, gameId);
     return game;
   },
 
-  createGame: async (config: GameConfig, roomId: string, userId: string, opponentUserId?: string): Promise<Game> => {
+  createGame: async (config: GameConfig, roomId: string, userId: string): Promise<Game> => {
     const { playerSide, gameType } = config;
-
+    
     const playerState: PlayerState = {
       userId,
       remainingTime: GAME_TIME_MS[gameType].baseTime,
     };
-
+    
+    const opponentUserId = (await RoomService.getRoom(roomId)).participants.find((id) => id !== userId);
+    
     const opponentPlayerState: PlayerState | null = opponentUserId ? {
       userId: opponentUserId,
       remainingTime: GAME_TIME_MS[gameType].baseTime,

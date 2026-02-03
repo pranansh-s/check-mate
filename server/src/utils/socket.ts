@@ -42,6 +42,19 @@ export const socketHandlers = (socket: Socket) => {
 			socket.join(roomId);
 			currentRoomId = roomId;
 			currentUserId = userId;
+			
+			const game = await GameService
+				.joinGame(roomId, userId)
+				.catch((err) =>
+					err instanceof ServiceError ? null : Promise.reject(err)
+			);
+
+			if(game) {
+				const { myProfile, opponentProfile } = await ProfileService.getPlayerProfiles(currentRoomId, currentUserId);
+				
+				socket.emit("gameJoined", game, opponentProfile);
+				socket.to(currentRoomId).emit("gameJoined", game, myProfile);
+			}
 		},
 
 		sendChatMessage: async (content: string) => {
@@ -56,11 +69,8 @@ export const socketHandlers = (socket: Socket) => {
 		newGame: async (config: GameConfig) => {	
 			if (!currentRoomId || !currentUserId) return;
 
-			const opponentUserId = (await RoomService.getRoom(currentRoomId)).participants.find((id) => id !== currentUserId);
-			const newGame = await GameService.createGame(config, currentRoomId, currentUserId, opponentUserId);
-
-			const myProfile = await ProfileService.getProfile(currentUserId);
-			const opponentProfile = opponentUserId ? await ProfileService.getProfile(opponentUserId) : null;
+			const newGame = await GameService.createGame(config, currentRoomId, currentUserId);
+			const { myProfile, opponentProfile } = await ProfileService.getPlayerProfiles(currentRoomId, currentUserId);
 
 			socket.emit("gameJoined", newGame, opponentProfile);
 			socket.to(currentRoomId).emit("gameJoined", newGame, myProfile);
@@ -79,6 +89,7 @@ export const socketHandlers = (socket: Socket) => {
 			if (!currentRoomId || !currentUserId) return;
 
 			await RoomService.leaveRoom(currentRoomId, currentUserId);
+			await GameService.updateRemainingTime(currentRoomId);
 
 			socket.leave(currentRoomId);
 

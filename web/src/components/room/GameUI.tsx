@@ -6,8 +6,8 @@ import { useMemo } from "react";
 
 const GameUI = () => {
 	const { playerSide, players } = useAppSelector(state => state.gameState);
-	const myPlayer = useMemo(() => playerSide == 'white' ? players.whiteSidePlayer : players.blackSidePlayer, [playerSide]);
-	const opponentPlayer = useMemo(() => playerSide == 'white' ? players.blackSidePlayer : players.whiteSidePlayer, [playerSide]);
+	const myPlayer = useMemo(() => playerSide == 'white' ? players.whiteSidePlayer : players.blackSidePlayer, [playerSide, players]);
+	const opponentPlayer = useMemo(() => playerSide == 'white' ? players.blackSidePlayer : players.whiteSidePlayer, [playerSide, players]);
 
 	const myProfile = useAppSelector(state => state.user);
 	const opponentProfile = useAppSelector(state => state.gameState.opponentProfile);
