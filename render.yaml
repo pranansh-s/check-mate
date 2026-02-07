@@ -35,7 +35,5 @@ services:
     dockerfilePath: ./Dockerfile.web
     plan: free
     envVars:
-      - key: PORT
-        value: 3000
       - key: NEXT_PUBLIC_BACKEND_URL
-        value: https://xhess-api.onrender.com
+        value: https://xhess-server.onrender.com
