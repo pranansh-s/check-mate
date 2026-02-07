@@ -6,7 +6,7 @@ class RedisService {
   private readonly TTL_MIN = 60;
 
   constructor() {
-    this.client = createClient({ url: 'redis://redis:6379' });
+    this.client = createClient({ url: process.env.REDIS_URL || 'redis://redis:6379' });
     this.initEventListeners();
   }
 

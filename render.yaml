@@ -13,6 +13,11 @@ services:
     envVars:
       - key: PORT
         value: 8000
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: xhess-redis
+          property: connectionString
       - key: NODE_ENV
         value: production
       - key: REDIS_URL
