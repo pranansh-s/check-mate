@@ -1,4 +1,3 @@
-version: 1
 services:
   - type: redis
     name: xhess-redis
@@ -9,11 +8,9 @@ services:
   - type: web
     name: xhess-server
     env: docker
-    dockerfile: Dockerfile
     dockerfilePath: ./Dockerfile
     target: server
-    buildCommand: docker build -t xhess-server --target server .
-    startCommand: node dist/server.js
+    plan: free
     envVars:
       - key: PORT
         value: 8000
@@ -25,69 +22,22 @@ services:
           name: xhess-redis
           property: connectionString
       - key: FIREBASE_PROJECT_ID
-        sync: false
         value: check-and-mate-26c90
       - key: FIREBASE_CLIENT_EMAIL
-        sync: false
         value: firebase-adminsdk-fbsvc@check-and-mate-26c90.iam.gserviceaccount.com
-      - key: FIREBASE_PRIVATE_KEY
-        sync: false
-        value: |
-          -----BEGIN PRIVATE KEY-----
-          MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC/Lw38alxzv4Bp
-          KQKm7wVwbi7qO4oFBBUyDemmn9l3nfVyF9XnjLTNACTDmcK+BbbTGFMc1ehfAWG7
-          yef84lseWuSMHahJFY2E+kgOfQbiZk+aePZ54w/wgohbuYTGptWc0S/ZZPnHCNg8
-          aKa8Ig85JediNVQ1u8t7FW0O04IEW+LxIy+MKxBlNY9lsLSj63/T8XOJb3jbBEMA
-          5wtqe98egM+8YbUksVZ71UQBThGThGQkshceZc/vDeQta49qA4IqIPN9c2VKTRcz
-          7BDO5CBza3189/S5PiHjRWBC/FOJsmjDIt0HdhbjgvtYTQEdYBOpoT0wQFmcP2JG
-          HS0kb7lzAgMBAAECggEAHbRLaYEDDU7fPjeLfHFduHq+GlGW37GjM2w69dMXQEEQ
-          HiJ67yeK/eD8VVHCErEjl0fLvgq0OHKoAzvbKgznWF+J7AU9nOFW5CbY5DtjwvBf
-          hOIvdX+kfdtiIVJBQXYxcVSFKTNJpbWHl1cxNMDb+aacfUNI6rJbaqvJDokpRdDV
-          4ibXGUnCf8VdLu7xC+l2HNVv2VuLmhtvRs3YhFRHbDQnldh+6bnV5GNzXFv5ugg/
-          uGhHnFpWvLhnSNMqMzN1wAH8KN4HUCz3vm0xOz7cfiCZxZ2Chi7OcueDQWTJPzBu
-          w+IN+JzUHpa1tMNofaH1FXsk/tieh5N5Xv3mZ0NvWQKBgQD1mDqAfNb1yL4MGPuw
-          626Y94OjPn9p9DUJJPi8Ix7Mt6jXSFhEzsJxAlfrvimAS+EfAOombMdlF9nEWOAi
-          U69CCLGLppWpotjDBQ17a2tzyyaqyaUCh3wid2lHBfKQFBnRogLbRtKttghLaxXd
-          ySmzXPOCFc3HT4eGI9ckFJu2KwKBgQDHSKy3QK8odpUhXga2FqD6kHaySroH5Vzp
-          eg2gpM5NKDcME3FD7khO2SFvWL5EEjNpIBxDZHMCQ7JiGL3IhDeXPt6dB3jMm1EV
-          O3RIXsFNIjnwf/qIm/IgkI3kmFzGsMyLtRXafYdsQnBPHwedY2lbZgcbu9AzSUlN
-          i+wrwKZt2QKBgQDJsJuSu3NZY+NXUgkZES/BpbtQi9ndbLVFbjxrXThFDSs2qW38
-          DAS5BCCqNIAmoaoeaQTiS4Ew73Zifk6LQkhypWsRcdwE9Pyoo/Sff+c9r/9wUKsX
-          uaZjM8eckTDTy/4sH63S4IXSLOUA8s+BVVvOti4wjbFx1klJCxP6yIXcAwKBgQDE
-          LqpBGP+WQO7c01ieBzbglDkVmfT7cvN9sTcbL0Mct/tA+x7k9f3fCWgd2mosTxKn
-          agII4ilKUGSap6qlbGvhi/XQ9psYKcqvsUDvQcDf81LAjOyRcZvyLPxSzx9+RmyH
-          GHT0C+G2VM2FRpHTghsk7BMRXVpAMuRj39xW0ifFOQKBgBUZMZL91rybQ1aH0fFI
-          rwJWEchoh2TDPQSuRdlZWMYEzzhFrNc0NtLGsADz47T1DFXWNdwV3RgistibOrYz
-          oWMM6BQDcdjbIZXirsmIuBudxRxqj72juUOEjTZYzhQebJ3IPrw04REqrtrN9AeN
-          Nm+TGYXxNUT4hIlscPik/ncK
-          -----END PRIVATE KEY-----
       - key: CORS_ORIGIN
         value: https://xhess-web.onrender.com
-    healthCheckPath: /
-    autoDeploy: true
-    plan: free
-    numInstances: 1
-    domains:
-      - xhess-api.onrender.com
 
   - type: web
     name: xhess-web
     env: docker
-    dockerfile: Dockerfile
     dockerfilePath: ./Dockerfile
     target: prod
-    buildCommand: docker build -t xhess-web --target prod --build-arg NEXT_PUBLIC_BACKEND_URL=https://xhess-api.onrender.com .
-    startCommand: node server.js --host 0.0.0.0
+    plan: free
+    dockerBuildArgs:
+      NEXT_PUBLIC_BACKEND_URL: https://xhess-api.onrender.com
     envVars:
       - key: PORT
         value: 3000
-      - key: NODE_ENV
-        value: production
       - key: NEXT_PUBLIC_BACKEND_URL
         value: https://xhess-api.onrender.com
-    healthCheckPath: /
-    autoDeploy: true
-    plan: free
-    numInstances: 1
-    domains:
-      - xhess-web.onrender.com
