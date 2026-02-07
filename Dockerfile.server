@@ -14,7 +14,7 @@ COPY server ./server
 ARG NEXT_PUBLIC_BACKEND_URL
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 
-RUN npm run build
+RUN npm run build:server
 
 FROM node:20-alpine AS server
 WORKDIR /app

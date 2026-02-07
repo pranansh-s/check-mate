@@ -6,6 +6,8 @@
     "web-dev": "npm -C ./web run dev",
     "server-dev": "npm -C ./server run dev",
     "build": "npm -C ./shared run build && npm -C ./web run build && npm -C ./server run build",
+    "build:web": "npm -C ./shared run build && npm -C ./web run build",
+    "build:server": "npm -C ./shared run build && npm -C ./server run build",
     "lint": " npm -C ./web run lint && npm -C ./server run lint",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
