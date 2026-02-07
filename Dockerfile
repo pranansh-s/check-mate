@@ -27,8 +27,7 @@ COPY --from=builder /app/shared/ ./node_modules/@xhess/shared
 
 RUN npm install
 
-EXPOSE 8000
-ENV PORT=8000
+EXPOSE ${PORT:-8000}
 
 CMD ["node", "dist/server.js"]
 
@@ -40,6 +39,6 @@ COPY --from=builder /app/web/.next/standalone/node_modules ./node_modules
 COPY --from=builder /app/web/public ./public
 COPY --from=builder /app/web/.next/static ./.next/static
 
-EXPOSE 3000
+EXPOSE ${PORT:-3000}
 
 CMD ["node", "server.js", "--", "--host", "0.0.0.0"]

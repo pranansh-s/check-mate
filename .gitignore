@@ -17,3 +17,5 @@
 **/dump.rdb
 
 .turbo
+
+docker-compose.yml
