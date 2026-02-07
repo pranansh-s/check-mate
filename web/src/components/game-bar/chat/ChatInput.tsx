@@ -41,7 +41,7 @@ const ChatInput = () => {
     } finally {
       setIsSending(false);
     }
-  }, [message]);
+  }, [dispatch, message]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

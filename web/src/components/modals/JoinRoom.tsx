@@ -29,7 +29,7 @@ const JoinRoom = memo(() => {
         roomKey: { value: formattedValue, error: undefined },
       });
     },
-    [setFormState]
+    [setFormState, formState.roomKey]
   );
 
   const handleRoomJoin = useCallback(() => {
@@ -41,7 +41,7 @@ const JoinRoom = memo(() => {
       handleErrors(err, strings.room.errors.roomJoinFail, setFormState);
       setLoading(false);
     }
-  }, [formState.roomKey, setFormState]);
+  }, [formState.roomKey, setFormState, router]);
 
   return (
     <ModalContainer>
@@ -60,4 +60,5 @@ const JoinRoom = memo(() => {
   );
 });
 
+JoinRoom.displayName = "JoinRoom";
 export default JoinRoom;

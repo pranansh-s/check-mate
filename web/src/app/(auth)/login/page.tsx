@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import UserService from '@/services/user.service';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { UserLoginSchema } from '@xhess/shared/schemas';

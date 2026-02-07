@@ -34,7 +34,7 @@ const usePlayerInput = () => {
       window.removeEventListener('keydown', handleKeyPress);
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [currentMoveIndex]);
+  }, [currentMoveIndex, dispatch]);
 
   return mousePos;
 };

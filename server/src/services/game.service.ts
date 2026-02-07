@@ -6,7 +6,7 @@ import { opponentSide } from '@xhess/shared/utils';
 import dbController from '../controllers/db.controller.js';
 
 import { ServiceError } from '../utils/error.js';
-import { checkEndGame, GAME_TIME_MS, updateTimeLeft } from '../utils/game.js';
+import { GAME_TIME_MS, updateTimeLeft } from '../utils/game.js';
 
 import ChessService from './chess.service.js';
 import RoomService from './room.service.js';
@@ -49,15 +49,14 @@ const GameService = {
     chessCache.set(gameId, chess);
 
     chess.makeMove(move);
+    chess.validateEndGame(game);
 
     updateTimeLeft(game, true);
-    checkEndGame(chess, game);
 
     game.moves.push(move);
     game.playerTurn = opponentSide(game.playerTurn);
 
     await GameService.saveGame(game, gameId);
-
     return game;
   },
 
@@ -65,7 +64,7 @@ const GameService = {
     const gameId = GameService.getGameId(roomId);
     const game = await GameService.getGame(gameId);
 
-    updateTimeLeft(game, true);
+    updateTimeLeft(game, false);
     await GameService.saveGame(game, gameId);
   },
 

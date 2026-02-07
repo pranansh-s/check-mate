@@ -1,4 +1,4 @@
-import { Game, Room } from '@xhess/shared/types';
+import { Room } from '@xhess/shared/types';
 
 export interface GetRoomResponse {
   room: Room;

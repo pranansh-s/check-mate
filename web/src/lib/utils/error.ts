@@ -31,7 +31,7 @@ const handleFirebaseError = (err: FirebaseError, title: string) => {
 export const handleErrors = (
   err: unknown,
   title: string,
-  setFormState?: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>
+  setFormState?: React.Dispatch<React.SetStateAction<{ [key: string]: IInputValue }>>
 ) => {
   if (err instanceof z.ZodError) {
     if (!setFormState) return;

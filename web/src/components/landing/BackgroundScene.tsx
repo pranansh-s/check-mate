@@ -13,6 +13,15 @@ import { createColoredModel } from '@/lib/utils/model';
 
 import Lighting from '../common/Lighting';
 
+const usePreloadedModels = () => {
+  const rook = useFBX(modelPaths[0]);
+  const knight = useFBX(modelPaths[1]);
+  const bishop = useFBX(modelPaths[2]);
+  const pawn = useFBX(modelPaths[3]);
+  
+  return [rook, knight, bishop, pawn];
+};
+
 const FloatingModel = ({
   model,
   color,
@@ -60,7 +69,7 @@ const FloatingModel = ({
 
 const BackgroundPieces = memo(() => {
   const { viewport } = useThree();
-  const models = useMemo(() => modelPaths.map(path => useFBX(path)), []);
+  const models = usePreloadedModels();
 
   const generateRandomConfig = (): IFloatingModelState => {
     const x = (Math.random() - 0.5) * viewport.width * 3.25,
@@ -103,6 +112,7 @@ const BackgroundScene = () => {
   );
 };
 
+BackgroundPieces.displayName = "BackgroundPieces";
 export default BackgroundScene;
 
 const SceneContainer = tw.div`

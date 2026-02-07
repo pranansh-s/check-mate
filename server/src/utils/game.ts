@@ -13,16 +13,6 @@ export const GAME_TIME_MS: Record<GameType, GameTiming> = {
   '3m': { baseTime: 3 * 60000, inc: 5 * 1000 },
 };
 
-export const checkEndGame = (chess: ChessService, game: Game) => {
-  if (chess.isStalemate(game.playerTurn)) {
-    if (chess.isCheckMate(game.playerTurn)) {
-      game.state = game.playerTurn == 'white' ? 'blackWin' : 'whiteWin';
-    } else {
-      game.state = 'draw';
-    }
-  }
-};
-
 export const updateTimeLeft = (game: Game, isMove: boolean) => {
   const now = Date.now();
   const timeElapsed = now - game.lastPlayedAt;

@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
 import { Profile } from '@xhess/shared/schemas';
-import { ChatMessage, Game, GameConfig, GameState, Move } from '@xhess/shared/types';
+import { ChatMessage, Game, GameConfig, Move } from '@xhess/shared/types';
 
 import { showErrorToast } from '@/components/common/ErrorToast';
 
@@ -64,8 +64,8 @@ const SocketService = {
     }
   },
 
-  endGame: (state: GameState) => {
-    socket.emit('newGameState', state);
+  surrender: () => {
+    socket.emit('surrender');
   },
 
   sendMessage: (message: string) => {

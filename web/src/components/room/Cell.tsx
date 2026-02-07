@@ -74,6 +74,7 @@ const Cell: React.FC<ICellProps> = memo(({ piece, currentPos, isPossibleMove }) 
   );
 });
 
+Cell.displayName = "Cell";
 export default Cell;
 
 const CellContainer = tw.div<{

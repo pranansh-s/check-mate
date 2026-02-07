@@ -3,10 +3,10 @@ import { createClient, RedisClientType } from 'redis';
 class RedisService {
   private client: RedisClientType;
 
-  private readonly TTL_MIN = 10;
+  private readonly TTL_MIN = 60;
 
   constructor() {
-    this.client = createClient();
+    this.client = createClient({ url: 'redis://redis:6379' });
     this.initEventListeners();
   }
 

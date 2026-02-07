@@ -1,5 +1,5 @@
 //TODO: - DI in services, decrease procedural code, validation separately, better abstraction?, better error handling?, event enums rather than strings
-//init roomToGameId, currentRoomId, etc on server restart, login bug, O-O O-O-O, draw by mutual, stalemate, 50 move, 3-peat, en-passant, proper modals on game end
+//init roomToGameId, currentRoomId, etc on server restart, login bug, O-O O-O-O, draw by mutual, 50 move, 3-peat, en-passant, proper modals on game end
 
 import { Board, Color, Game, Move, Piece, Position } from '@xhess/shared/types';
 import { boardAfterMove, createBoard, getKingPosition, getValidMovesForPiece, opponentSide } from '@xhess/shared/utils';
@@ -31,7 +31,17 @@ class ChessService {
     );
   };
 
-  isStalemate = (color: Color): boolean => {
+  validateEndGame = (game: Game) => {
+    if (this.isStalemate(game.playerTurn)) {
+      if (this.isCheckMate(game.playerTurn)) {
+        game.state = game.playerTurn == 'white' ? 'blackWin' : 'whiteWin';
+      } else {
+        game.state = 'draw';
+      }
+    }
+  }
+
+  private isStalemate = (color: Color): boolean => {
     const pieces = this.board.flat().filter(p => p && p.color == color) as Piece[];
     for (const piece of pieces) {
       const validMoves = getValidMovesForPiece(this.board, piece, color);
@@ -42,7 +52,7 @@ class ChessService {
     return true;
   };
 
-  isCheckMate = (color: Color): boolean => {
+  private isCheckMate = (color: Color): boolean => {
     const opponent = opponentSide(color);
     const pieces = this.board.flat().filter(p => p && p.color == opponent) as Piece[];
     for (const piece of pieces) {

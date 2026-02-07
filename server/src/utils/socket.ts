@@ -86,6 +86,12 @@ export const socketHandlers = (socket: Socket) => {
       socket.to(currentRoomId).emit('moveUpdate', game);
     },
 
+    // surrender: async () => {
+    //   if (!currentRoomId || !currentUserId) return;
+
+    //   await GameService.
+    // },
+
     disconnect: async () => {
       if (!currentRoomId || !currentUserId) return;
 

@@ -40,7 +40,7 @@ const UserService = {
         store.dispatch(onLogin(parsedProfile));
         return parsedProfile;
       } catch (err) {
-        console.log('Failed to parse cached profile');
+        console.log('Failed to parse cached profile', err);
       }
     }
 

@@ -2,7 +2,6 @@
 
 import tw from 'tailwind-styled-components';
 
-import { Profile } from '@xhess/shared/schemas';
 import { Room } from '@xhess/shared/types';
 
 import useRoomInit from '@/hooks/useRoomInit';
@@ -12,6 +11,7 @@ import GameBar from '../game-bar';
 import GameSettings from '../modals/GameSettings';
 import Waiting from '../modals/Waiting';
 import GameUI from './GameUI';
+import Surrender from '../modals/Surrender';
 
 interface IRoomProps {
   roomId: string;
@@ -26,6 +26,7 @@ const RoomClient: React.FC<IRoomProps> = ({ roomId, room }) => {
     <RoomContainer>
       {activeModal === 'gameSettings' && <GameSettings />}
       {activeModal === 'waiting' && <Waiting />}
+      {activeModal === 'surrender' && <Surrender/>}
       <GameUI />
       <GameBar />
     </RoomContainer>

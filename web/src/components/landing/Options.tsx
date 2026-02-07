@@ -36,7 +36,11 @@ const Options = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
+
+  const handleRoomJoinModal = () => {
+    dispatch(openModal('joinRoom'));
+  }
 
   return (
     <OptionsContainer>
@@ -44,7 +48,7 @@ const Options = () => {
       <Button onClick={handleCreateRoom} isLoading={loading} disabled={loading} themeColor="blue">
         create room
       </Button>
-      <Button onClick={() => dispatch(openModal('joinRoom'))}>join room</Button>
+      <Button onClick={handleRoomJoinModal}>join room</Button>
     </OptionsContainer>
   );
 };

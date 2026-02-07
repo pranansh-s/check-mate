@@ -26,6 +26,7 @@ const StyledModalContainer = tw(ModalContainer)`
   gap-4
   bg-zinc-900
   py-12
+  border-none
 `;
 
 const WaitingText = tw.span`
@@ -41,8 +42,8 @@ const LoaderContainer = tw.div`
 `;
 
 const LoadDot = tw.div`
-  h-2
-  w-2
+  h-1
+  w-1
   animate-bounce
   rounded-full
 `;

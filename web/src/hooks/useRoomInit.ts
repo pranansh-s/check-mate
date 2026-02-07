@@ -3,8 +3,7 @@ import { useEffect } from 'react';
 import SocketService from '@/services/socket.service';
 import UserService from '@/services/user.service';
 
-import { Profile } from '@xhess/shared/schemas';
-import { Game, Room } from '@xhess/shared/types';
+import { Room } from '@xhess/shared/types';
 
 import { initMessages } from '@/redux/features/chatSlice';
 import { openModal } from '@/redux/features/modalSlice';
@@ -24,7 +23,7 @@ const useRoomInit = (currentRoomId: string, currentRoom: Room) => {
     dispatch(openModal(isOwner ? 'gameSettings' : 'waiting'));
 
     return SocketService.leaveRoom;
-  }, [currentRoomId, userId]);
+  }, [currentRoomId, userId, currentRoom, dispatch]);
 };
 
 export default useRoomInit;

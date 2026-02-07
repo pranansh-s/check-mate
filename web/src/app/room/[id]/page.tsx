@@ -6,7 +6,7 @@ import RoomClient from '@/components/room';
 
 import { get_room } from '@/lib/api';
 
-export default async function RoomPage({ params }: { params: { id: string } }) {
+export default async function RoomPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   try {
