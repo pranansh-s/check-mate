@@ -8,8 +8,7 @@ services:
   - type: web
     name: xhess-server
     env: docker
-    dockerfilePath: ./Dockerfile
-    target: server
+    dockerfilePath: ./Dockerfile.server
     plan: free
     envVars:
       - key: PORT
@@ -25,17 +24,16 @@ services:
         value: check-and-mate-26c90
       - key: FIREBASE_CLIENT_EMAIL
         value: firebase-adminsdk-fbsvc@check-and-mate-26c90.iam.gserviceaccount.com
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
       - key: CORS_ORIGIN
         value: https://xhess-web.onrender.com
 
   - type: web
     name: xhess-web
     env: docker
-    dockerfilePath: ./Dockerfile
-    target: prod
+    dockerfilePath: ./Dockerfile.web
     plan: free
-    dockerBuildArgs:
-      NEXT_PUBLIC_BACKEND_URL: https://xhess-api.onrender.com
     envVars:
       - key: PORT
         value: 3000

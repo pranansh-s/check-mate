@@ -1,0 +1,29 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY package*.json ./
+
+COPY shared/package.json ./shared/
+COPY web/package.json ./web/
+
+RUN npm install
+
+COPY shared ./shared
+COPY web ./web
+
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+
+RUN npm run build
+
+FROM node:20-alpine AS prod
+WORKDIR /app
+
+COPY --from=builder /app/web/.next/standalone/web ./
+COPY --from=builder /app/web/.next/standalone/node_modules ./node_modules
+COPY --from=builder /app/web/public ./public
+COPY --from=builder /app/web/.next/static ./.next/static
+
+EXPOSE ${PORT:-3000}
+
+CMD ["node", "server.js", "--", "--host", "0.0.0.0"]
